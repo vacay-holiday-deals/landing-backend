@@ -23,6 +23,7 @@ def upload(file):
 
     return result
 
+
 # mongodb
 client = MongoClient(os.getenv('MONGO_URI'),
                      connect=False, connectTimeoutMS=40000)
@@ -143,6 +144,34 @@ def show_offers():
         except Exception as err:
             print("could not connect to collection due to ", err)
     return render_template('offers.html', output=output)
+# show the offers available
+@app.route('/api/getOffers' methods=['GET'])
+@is_logged_in
+def get_offers():
+    if request.method == 'GET':
+        output = []
+        try:
+            offer = db.offers
+            print("successfully connected to collection")
+
+            offers = offer.find()
+            for offer in offers:
+                if offer:
+                    output.append({
+                        'id': offer['_id'],
+                        'title': offer['Title'],
+                        'overview': offer['Overview'],
+                        'itinerary': offer['Itinerary'],
+                        'inclusion': offer['Inclusion'],
+                        'price': offer['Price'],
+                        'addinfo': offer['AddInfo'],
+                        'images': offer['Images'],
+                        'created': offer['CreatedAt']
+                    })
+
+        except Exception as err:
+            print("could not connect to collection due to ", err)
+    return jsonify(output)
 
 # route to add an offer
 @app.route('/api/addOffer', methods=['POST', 'GET'])

@@ -168,7 +168,7 @@ def get_offers():
             for offer in offers:
                 if offer:
                     output.append({
-                        #'id': offer['_id'],
+                        # 'id': offer['_id'],
                         'title': offer['Title'],
                         'overview': offer['Overview'],
                         'itinerary': offer['Itinerary'],
@@ -184,6 +184,8 @@ def get_offers():
     return jsonify(output)
 
 # route to add an offer
+
+
 @app.route('/api/addOffer', methods=['POST', 'GET'])
 @is_logged_in
 def add_offer():

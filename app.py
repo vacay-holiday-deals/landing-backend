@@ -43,7 +43,7 @@ app.config.update(
 
 # load the static files
 css = Bundle('css/root.css', 'css/layouts.css', 'css/navbar.css',
-             'css/index.css', 'css/login.css', 'css/offers.css', 'css/edit_offers.css', output='gen/main.css')
+             'css/index.css', 'css/login.css', 'css/offers.css', 'css/edit_offers.css', 'css/add_offers.css', output='gen/main.css')
 
 assets.register('css_all', css)
 

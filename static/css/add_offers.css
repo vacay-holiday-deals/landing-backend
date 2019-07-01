@@ -1,0 +1,16 @@
+.btn--offers {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  position: relative;
+  margin-top: -5rem;
+  padding: 10px 0;
+}
+.form-control {
+  display: flex;
+}
+textarea.form-control-textarea {
+  height: 14rem !important;
+  width: 100%;
+  padding: 10px;
+}

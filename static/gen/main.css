@@ -61,7 +61,7 @@ a:hover {
   border-radius: 3px;
   background: var(--primary-color);
   font-family: var(--primary-font);
-  height: 3rem;
+  height: 2.7rem;
   box-shadow: var(--box-shadow-primary) !important;
 }
 
@@ -151,6 +151,7 @@ h3 {
   margin-top: 5%;
   padding: 10px 30px;
   border-radius: 3px;
+  height: 3rem !important;
 }
 
 @media only screen and (min-width: 320px) and (max-width: 700px) {

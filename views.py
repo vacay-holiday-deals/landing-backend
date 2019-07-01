@@ -1,6 +1,6 @@
 # imports
 
-from app import app
+from app import app, db
 from flask import render_template, redirect, url_for, flash, request, abort, session, jsonify
 from bson import ObjectId
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
@@ -23,11 +23,6 @@ def upload(file):
 
     return result
 
-
-# mongodb
-client = MongoClient(os.getenv('MONGO_URI'),
-                     connect=False, connectTimeoutMS=40000)
-db = client.offers
 
 # droparea
 # initialise dropzone

@@ -144,8 +144,10 @@ def show_offers():
         except Exception as err:
             print("could not connect to collection due to ", err)
     return render_template('offers.html', output=output)
-# show the offers available
-@app.route('/api/getOffers' methods=['GET'])
+
+
+# sreturn offer to frontend
+@app.route('/api/getOffer' methods=['GET'])
 @is_logged_in
 def get_offers():
     if request.method == 'GET':

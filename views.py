@@ -147,7 +147,7 @@ def show_offers():
 
 
 # sreturn offer to frontend
-@app.route('/api/getOffer' methods=['GET'])
+@app.route('/api/getOffer', methods=['GET'])
 @is_logged_in
 def get_offers():
     if request.method == 'GET':

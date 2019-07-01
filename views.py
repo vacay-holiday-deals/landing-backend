@@ -1,6 +1,6 @@
 # imports
 
-from app import app, db
+from app import app
 from flask import render_template, redirect, url_for, flash, request, abort, session, jsonify
 from bson import ObjectId
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
@@ -13,6 +13,20 @@ import datetime
 from flask_dropzone import Dropzone as Drop
 import cloudinary
 from cloudinary import uploader
+from dotenv import load_dotenv
+
+# load env variables from the .env file
+load_dotenv(verbose=True)
+
+
+# Mongodb configurations
+try:
+    client = MongoClient(os.getenv('MONGO_URI'),
+                         connect=False, connectTimeoutMS=40000)
+    db = client.offers
+    print('*** connected to the database successfully ***')
+except Exception as error:
+    print('*** database connection failed ***', error)
 
 
 # functions

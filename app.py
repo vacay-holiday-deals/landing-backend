@@ -4,7 +4,6 @@ from flask import Flask
 from flask_cors import CORS
 from dotenv import load_dotenv
 import cloudinary
-from flask_pymongo import MongoClient
 from flask_assets import Environment, Bundle
 import os
 
@@ -23,16 +22,6 @@ assets = Environment(app)
 # load env variables from the .env file
 load_dotenv(verbose=True)
 
-# Mongodb configurations
-try:
-    client = MongoClient(os.getenv('MONGO_URI'),
-                        connect=False, connectTimeoutMS=40000)
-    db = client.offers
-    print('*** connected to the database successfully ***')
-except Exception as error:
-    print('*** database connection failed ***', error)
-
-
 # Cloudinary configurations
 cloudinary.config(
     cloud_name=os.getenv('CLOUD_NAME'),
@@ -40,11 +29,8 @@ cloudinary.config(
     api_secret=os.getenv('API_SECRET')
 )
 
-
 # secret key
 SECRET_KEY = os.urandom(64)
-
-
 
 # update the app config
 app.config.update(
@@ -54,7 +40,6 @@ app.config.update(
     DROPZONE_MAX_FILE_SIZE=10,
     DROPZONE_MAX_FILES=10,
 )
-
 
 # load the static files
 css = Bundle('css/root.css', 'css/layouts.css', 'css/navbar.css',

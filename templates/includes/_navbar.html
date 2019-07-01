@@ -1,0 +1,21 @@
+<nav class="navbar navbar-default">
+  <a class="navbar-brand" href="#">
+    <div class="logo--img">
+      <img
+        src="{{url_for('static', filename='images/logo.png')}}"
+        alt="Vacay holiday deals"
+      />
+    </div>
+  </a>
+  <div class="nav--container">
+    {% if session.logged_in%}
+    <div class="nav--users">
+      <span class="username">{{ session.username }}</span>
+      <i class="fas fa-user"> </i>
+      <a href="{{ url_for('logout') }}" class="nav--logout"
+        ><i class="fas fa-sign-out-alt"><span>Logout</span></i></a
+      >
+    </div>
+    {% endif %}
+  </div>
+</nav>

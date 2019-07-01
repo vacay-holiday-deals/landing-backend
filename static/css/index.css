@@ -1,0 +1,33 @@
+.container {
+  padding: 20px;
+  position: relative;
+}
+.home {
+  height: 20vh;
+  width: 40vw;
+  position: absolute;
+  left: 50%;
+  top: 90%;
+  transform: translate(-50%, -2%);
+  background: #000411;
+  padding: 10px;
+  text-align: center;
+}
+h3 {
+  color: white;
+  font-weight: 600;
+}
+.login-btn {
+  margin-top: 5%;
+  padding: 10px 30px;
+  border-radius: 3px;
+}
+
+@media only screen and (min-width: 320px) and (max-width: 700px) {
+  .home {
+    width: 100%;
+  }
+  h3 {
+    font-size: 1rem;
+  }
+}

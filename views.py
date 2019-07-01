@@ -157,7 +157,6 @@ def show_offers():
 
 # sreturn offer to frontend
 @app.route('/api/getOffer', methods=['GET'])
-@is_logged_in
 def get_offers():
     if request.method == 'GET':
         output = []
@@ -169,7 +168,7 @@ def get_offers():
             for offer in offers:
                 if offer:
                     output.append({
-                        'id': offer['_id'],
+                        #'id': offer['_id'],
                         'title': offer['Title'],
                         'overview': offer['Overview'],
                         'itinerary': offer['Itinerary'],

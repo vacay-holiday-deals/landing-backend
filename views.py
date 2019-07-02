@@ -316,7 +316,7 @@ def get_data():
 
         # sending email information to vacay email
         msg = Message(From=new_data['Email'],
-                      To='mymbugua@gmail.com', charset='utf-8')
+                      To='newtonmbugua95@gmail.com', charset='utf-8')
         msg.CC = 'dkimani@vacay.co.ke'
         msg.Subject = new_data['Package']
         msg.Body = msg_string

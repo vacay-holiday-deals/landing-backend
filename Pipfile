@@ -19,6 +19,7 @@ flask-assets = "*"
 flask-wtf = "*"
 flask-dropzone = "*"
 gunicorn = "*"
+mailer = "*"
 
 [requires]
 python_version = "3.6"

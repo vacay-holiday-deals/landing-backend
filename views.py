@@ -1,7 +1,7 @@
 # imports
 
 from app import app
-from flask import render_template, redirect, url_for, flash, request, abort, session, jsonify
+from flask import render_template, redirect, url_for, flash, request, abort, session, jsonify, json
 from bson import ObjectId
 from flask_login import LoginManager, login_user, current_user, logout_user, login_required
 from bcrypt import hashpw, gensalt
@@ -14,6 +14,8 @@ from flask_dropzone import Dropzone as Drop
 import cloudinary
 from cloudinary import uploader
 from dotenv import load_dotenv
+from ast import literal_eval
+from mailer import Mailer, Message
 
 # load env variables from the .env file
 load_dotenv(verbose=True)
@@ -187,7 +189,6 @@ def get_offers():
 
 
 @app.route('/api/addOffer', methods=['POST', 'GET'])
-@is_logged_in
 def add_offer():
     form = DetailForm()
     if request.method == 'POST':
@@ -291,11 +292,48 @@ def edit_offer(id):
     return render_template('edit_offers.html', form=form)
 
 # data from frontend
-@app.route('/getData', methods=['POST'])
+@app.route('/api/uploadDetail', methods=['POST'])
 def get_data():
-    output = []
     if request.method == 'POST':
         data = request.data
-        print(data)
+        new_data = literal_eval(data.decode('utf-8'))
 
-    return data
+        email_object = {
+            'Name': new_data['Name'],
+            'Email': new_data['Email'],
+            'Package': new_data['Package'],
+            'Depature': new_data['Departure'],
+            'Adult': new_data['Adults'],
+            'Children': new_data['Children'],
+            'Bugdet': new_data['Budget'],
+            'Addinfo': new_data['Info']
+        }
+
+        msg_string = 'Name: ' + new_data['Name'] + '\n' + 'Email: ' + new_data['Email'] + '\n' + ' Nationality: ' + new_data['Nationality'] + '\n' + ' Number: ' + new_data['Number'] + '\n' + ' Departure: ' + \
+            new_data['Departure'] + '\n' + ' Adults: ' + new_data['Adults'] + '\n' + ' Children: ' + \
+            new_data['Children'] + '\n' + \
+            ' Additional information: ' + new_data['Info']
+
+        # sending email information to vacay email
+        msg = Message(From=new_data['Email'],
+                      To='mymbugua@gmail.com', charset='utf-8')
+        msg.CC = 'dkimani@vacay.co.ke'
+        msg.Subject = new_data['Package']
+        msg.Body = msg_string
+
+        sender = Mailer(host='smtp.gmail.com', use_tls=True)
+        usr = 'mymbugua@gmail.com'
+        pwd = 'Ahou-smil3y-fac3'
+        sender.login(usr, pwd)
+        sender.send(msg)
+
+        # connect to database
+        try:
+            emails = db.emails
+
+            emails.insert_one(email_object)
+            print('added to the database')
+        except Exception as error:
+            print('could not add to the database due to', error)
+
+    return jsonify(new_data)

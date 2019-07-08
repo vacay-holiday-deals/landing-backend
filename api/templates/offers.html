@@ -1,7 +1,7 @@
 {% extends 'layouts.html' %} {% block body %}
 <div class="offers--container">
   <div class="users">
-    <a href="{{ url_for('add_offer') }}" class="btn btn-primary add-offer"
+    <a href="{{ url_for('api.add_offer') }}" class="btn btn-primary add-offer"
       ><i class="fas fa-plus"><span>add offer</span></i></a
     >
   </div>
@@ -13,29 +13,32 @@
       <p class="content--paragraph">{{ offer["created"].date() }}</p>
     </div>
     <div class="icons">
-      {% if session.role == 'admin' %}
+      {% if current_user.role == 'admin' %}
       <a href="editOffer/{{ offer['id'] }}" class="icon">
         <i class="fas fa-pencil-alt"><span>edit</span></i>
       </a>
 
-      <form action="{{url_for('delete_offer', id=offer['id'])}}">
+      <form action="{{url_for('api.delete_offer', id=offer['id'])}}">
         <button type="submit" class="icon">
           <i class="fas fa-trash-alt"> <span>delete</span></i>
         </button>
       </form>
 
-      {% elif session.role == 'senior' %}
+      {% elif current_user.role == 'senior' %}
       <a href="editOffer/{{ offer['id'] }}" class="icon">
         <i class="fas fa-pencil-alt"><span>edit</span></i>
       </a>
 
-      <form action="{{url_for('delete_offer', id=offer['id'])}}" method="POST">
+      <form
+        action="{{url_for('api.delete_offer', id=offer['id'])}}"
+        method="POST"
+      >
         <button type="submit" class="icon">
           <i class="fas fa-trash-alt"> <span>delete</span></i>
         </button>
       </form>
 
-      {% elif session.role == 'junior' %}
+      {% elif current_user.role == 'junior' %}
       <a href="editOffer/{{ offer['id'] }}" class="icon">
         <i class="fas fa-pencil-alt"><span>edit</span></i>
       </a>

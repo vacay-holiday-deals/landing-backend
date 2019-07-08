@@ -1,17 +1,12 @@
-{% extends 'layouts.html'%} {% block header %}
-{{ dropzone.load_css() }}
-{{
-  dropzone.style(
-    "border: 2px dotted #0087F7; min-height: 200px; min-width: 400px; margin: 0 0 5% 0; border-radius: 5px; "
-  )
-}}
-{% endblock header %} {% block body %}
+{% extends 'layouts.html'%} {% block body %}
 
 <!--Html-->
 <div class="container">
-  <div class="users">
+  <div class="btn--offers">
     <div class="form-btns">
-      <a href="{{ url_for('show_offers') }}" class="btn btn-primary viewoffers"
+      <a
+        href="{{ url_for('api.show_offers') }}"
+        class="btn btn-primary viewoffers"
         ><i class="fas fa-eye"><span>view offers</span></i></a
       >
     </div>
@@ -19,7 +14,12 @@
   {% from 'includes/_formhelpers.html' import render_field %}
   <h4 class="heading">Fill the form to add the offers</h4>
 
-  <form action="" class="form" method="POST" enctype="multipart/form-data">
+  <form
+    action="{{ url_for('api.add_offer') }}"
+    class="form"
+    method="POST"
+    enctype="multipart/form-data"
+  >
     <div class="form-group">
       <label for="file">Files</label>
       <input
@@ -46,8 +46,8 @@
       <label for="overview">Overview</label>
       <textarea
         type="text"
-        class="form-control"
-        id="oveditor"
+        class="form-control-textarea"
+        id="oveitor"
         placeholder="overview"
         name="overview"
       ></textarea>
@@ -57,7 +57,7 @@
       <textarea
         type="text"
         class="form-control-textarea"
-        id="iteditor"
+        id="iteitor"
         placeholder="itinerary"
         name="itinerary"
       ></textarea>
@@ -67,7 +67,7 @@
       <textarea
         type="text"
         class="form-control-textarea"
-        id="ineditor"
+        id="inditor"
         placeholder="inclusion"
         name="inclusion"
       ></textarea>
@@ -77,7 +77,7 @@
       <textarea
         type="text"
         class="form-control-textarea"
-        id="preditor"
+        id="peditor"
         placeholder="price"
         name="price"
       ></textarea>
@@ -87,7 +87,7 @@
       <textarea
         type="text"
         class="form-control-textarea"
-        id="adineditor"
+        id="aneditor"
         placeholder="Additional information"
         name="addinfo"
       ></textarea>

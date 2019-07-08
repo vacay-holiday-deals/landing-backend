@@ -165,7 +165,21 @@ h3 {
 
 .login--container {
   width: 40%;
-  margin: 0 30%;
+  margin: -1rem 30%;
+  border: 0.5px solid #d4d4d4;
+  border-radius: 3px;
+  padding: 5px 30px;
+}
+.form--logo {
+  object-fit: contain;
+  height: 80px;
+  width: 130px;
+  margin: 10px 0;
+  padding: 0;
+}
+.form--logo > img {
+  height: 100%;
+  width: 100%;
 }
 .form-heading {
   font-size: 1.2rem;
@@ -192,6 +206,7 @@ textarea {
   color: var(--grey);
   font-size: 0.9rem;
   font-family: var(--primary-font), sans-serif;
+  font-weight: 400;
 }
 .button {
   padding: 5px;

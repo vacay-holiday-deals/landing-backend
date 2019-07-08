@@ -20,6 +20,8 @@ flask-wtf = "*"
 flask-dropzone = "*"
 gunicorn = "*"
 mailer = "*"
+flask-sqlalchemy = "*"
+flask-talisman = "*"
 
 [requires]
 python_version = "3.6"

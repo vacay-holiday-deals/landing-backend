@@ -8,11 +8,11 @@
     </div>
   </a>
   <div class="nav--container">
-    {% if session.logged_in%}
+    {% if current_user.is_authenticated %}
     <div class="nav--users">
-      <span class="username">{{ session.username }}</span>
+      <span class="username">{{ current_user.username }}</span>
       <i class="fas fa-user"> </i>
-      <a href="{{ url_for('logout') }}" class="nav--logout"
+      <a href="{{ url_for('api.logout') }}" class="nav--logout"
         ><i class="fas fa-sign-out-alt"><span>Logout</span></i></a
       >
     </div>

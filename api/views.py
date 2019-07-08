@@ -1,103 +1,92 @@
 # imports
 
-from app import app
-from flask import render_template, redirect, url_for, flash, request, abort, session, jsonify, json
-from bson import ObjectId
-from flask_login import LoginManager, login_user, current_user, logout_user, login_required
+from . import db
+from flask import render_template, redirect, url_for, flash, request, jsonify, Blueprint, session
+from .models import User
+from flask_login import login_user, current_user, logout_user, login_required
 from bcrypt import hashpw, gensalt
-from forms import RegisterForm, DetailForm, LoginForm
+from .forms import RegisterForm, DetailForm, LoginForm
 from functools import wraps
-from flask_pymongo import MongoClient
+from bson import ObjectId
 import os
 import datetime
-from flask_dropzone import Dropzone as Drop
 import cloudinary
 from cloudinary import uploader
 from dotenv import load_dotenv
 from ast import literal_eval
 from mailer import Mailer, Message
+from .controllers import upload
+from flask_pymongo import MongoClient
+
+# initialise blueprint
+api = Blueprint('api', __name__)
 
 # load env variables from the .env file
 load_dotenv(verbose=True)
 
-
-# Mongodb configurations
-try:
-    client = MongoClient(os.getenv('MONGO_URI'),
-                         connect=False, connectTimeoutMS=40000)
-    db = client.offers
-    print('*** connected to the database successfully ***')
-except Exception as error:
-    print('*** database connection failed ***', error)
-
-
-# functions
-def upload(file):
-    if request.method == 'POST':
-        res = cloudinary.uploader.upload(file, folder='Projects/vacay')
-        result = res['secure_url']
-
-    return result
-
-
-# droparea
-# initialise dropzone
-dropzone = Drop(app)
-
-
-# check if user is logged in
-def is_logged_in(f):
-    @wraps(f)
-    def wrap(*args, **kwargs):
-        if 'logged_in' in session:
-            return f(*args, **kwargs)
-        else:
-            flash('Unauthoried, Please login', 'danger')
-            return redirect(url_for('login'))
-    return wrap
+# mongodb configurations
+uri = os.getenv('MONGO_URI')
+client = MongoClient(uri, connect=False, connectTimeoutMS=30000)
+mongo = client.get_database('offers')
 
 
 # define routes
 
 # index route
-@app.route('/')
+@api.route('/')
 def index():
     return render_template('index.html')
 
+# register route
+@api.route('/register', methods=['POST'])
+def register():
+    if request.method == 'POST':
+        # get the json information to create a user
+        user = request.get_json()
 
-@app.route('/login', methods=['POST', 'GET'])
+        # user details
+        name = user['name']
+        username = user['username']
+        email = user['email']
+        passw = user['password']
+        role = user['role']
+
+        # before adding user check that they are not null ::Todo
+
+        new_user = User(name=name, email=email, username=username,
+                        role=role, password=hashpw(passw.encode('utf-8'), gensalt()))
+
+        try:
+            db.session.add(new_user)
+            db.session.commit()
+            print('*** user added ***')
+            return jsonify({'msg': 'user added successfully'})
+        except Exception as error:
+            print(error)
+            return jsonify({'msg': 'found error'})
+
+    return jsonify({'msg': 'method not allowed'}), 405
+
+
+# login route
+@api.route('/login', methods=['POST', 'GET'])
 def login():
     #form = LoginForm()
     if request.method == 'POST':
         # get value from field
         try:
             pass_candidate = request.form['password']
-
+            username = request.form['username']
             # get user by usernamr
-            users = db.users
-            log_user = users.find_one(
-                filter={'username': request.form['username']})
+            log_user = User.query.filter_by(username=username).first()
 
             if log_user:
                 # check if password is same as one in the db
-                if hashpw(pass_candidate.encode('utf-8'), log_user['password']) == log_user['password']:
-                    # check for role
-                    if log_user['role'] is not '' and log_user['role'] is not None:
-                        # login the user
-                        #user = log_user['username']
-                        # login_user(user)
-                        session['logged_in'] = True
-                        session['username'] = log_user['username']
-                        session['role'] = log_user['role']
-                        session.permanent = True
-
-                        flash('you have been logged in successfully', 'success')
-
-                        return redirect(url_for('show_offers'))
-
-                    else:
-                        error = 'you must have a role to login'
-                        return render_template('login.html', error=error)
+                if hashpw(pass_candidate.encode('utf-8'), log_user.password) == log_user.password:
+                    login_user(log_user, remember=True,
+                               duration=datetime.timedelta(minutes=40))
+                    flash('you have been logged in successfully', 'success')
+                    return redirect(url_for('api.show_offers'))
                 else:
                     error = 'invalid login, check username of password'
                     return render_template('login.html', error=error)
@@ -110,31 +99,44 @@ def login():
     return render_template('login.html')
 
 
-# route to logout user
-@app.route('/logout', methods=['POST', 'GET'])
-@is_logged_in
-def logout():
-    # logout_user()
-    # return redirect(url_for('index'))
-    if session['username']:
-        del session['username']
-        session['logged_in'] = False
-        session.permanent = False
-        flash('you are now logged out')
-        return redirect(url_for('login'))
+# get all users route
+@api.route('/getusers', methods=['GET'])
+def get_users():
+    if request.method == 'GET':
+        # get all the users
+        output = []
+        users = User.query.all()
 
-    flash('user logged out')
-    return render_template('login.html')
+        for usr in users:
+            output.append({
+                'username': usr.username,
+                'password': usr.password.decode('utf-8'),
+                'email': usr.email,
+                'name': usr.name
+            })
+            print(output)
+
+        return jsonify({'Output': output})
+    return jsonify({'msg': 'method not allowed'}), 405
+
+
+# route to logout user
+@api.route('/logout', methods=['POST', 'GET'])
+@login_required
+def logout():
+    logout_user()
+    clear()
+    return redirect(url_for('api.login'))
 
 
 # show the offers available
-@app.route('/showOffers')
-@is_logged_in
+@api.route('/showOffers', methods=['GET'])
+@login_required
 def show_offers():
     if request.method == 'GET':
         output = []
         try:
-            offer = db.offers
+            offer = mongo.offers
             print("successfully connected to collection")
 
             offers = offer.find()
@@ -152,18 +154,20 @@ def show_offers():
                         'created': offer['CreatedAt']
                     })
 
+            return render_template('offers.html', output=output)
         except Exception as err:
             print("could not connect to collection due to ", err)
-    return render_template('offers.html', output=output)
+    msg = 'Method not allowed'
+    return render_template('offers.html', msg=msg)
 
 
 # sreturn offer to frontend
-@app.route('/api/getOffer', methods=['GET'])
+@api.route('/api/getOffer', methods=['GET'])
 def get_offers():
     if request.method == 'GET':
         output = []
         try:
-            offer = db.offers
+            offer = mongo.offers
             print("successfully connected to collection")
 
             offers = offer.find()
@@ -181,18 +185,25 @@ def get_offers():
                         'created': offer['CreatedAt']
                     })
 
+            return jsonify(output)
         except Exception as err:
             print("could not connect to collection due to ", err)
-    return jsonify(output)
+    return jsonify({'msg': 'method not allowed'}), 405
+
 
 # route to add an offer
 
 
-@app.route('/api/addOffer', methods=['POST', 'GET'])
+@api.route('/api/addOffer', methods=['POST', 'GET'])
 def add_offer():
     form = DetailForm()
     if request.method == 'POST':
-        file = request.files.get('file')
+        files = request.files.getlist('file')
+        file = []
+        for f in files:
+            result = upload(f)
+            file.append(result)
+
         title = request.form['title']
         overview = request.form['overview']
         itinerary = request.form['itinerary']
@@ -208,11 +219,11 @@ def add_offer():
             'Price': price,
             'AddInfo': addinfo,
             'CreatedAt': datetime.datetime.now(),
-            'Images':  upload(file)
+            'Images':  file
         }
 
         try:
-            offers = db.offers
+            offers = mongo.offers
             print("connected successfully to collection")
         except Exception as err:
             print('could not connect to collection due to ', err)
@@ -220,51 +231,38 @@ def add_offer():
         try:
             offers.insert_one(offer_item)
             flash("added offer successfully", 'success')
+            return redirect(url_for('api.show_offers'))
+
         except Exception as err:
             flash('could not add offer due to ' + str(err), 'danger')
-
-        return redirect(url_for('show_offers'))
 
     return render_template('add_offers.html')
 
 # route to delete an offer
-@app.route('/delete/<string:id>', methods=['POST', 'GET'])
-@is_logged_in
+@api.route('/delete/<string:id>', methods=['POST', 'GET'])
 def delete_offer(id):
     if request.method == 'GET':
         # connect to the database
-        offers = db.offers
+        offers = mongo.offers
 
         # find item to delete
         offers.delete_one({'_id': ObjectId(id)})
-        return redirect(url_for('show_offers'))
+        return redirect(url_for('api.show_offers'))
         flash('item deleted', 'success')
     return render_template('offers.html')
 
 
 # route to edit offer
-@app.route('/editOffer/<string:id>', methods=['POST', 'GET'])
-@is_logged_in
+@api.route('/editOffer/<string:id>', methods=['POST', 'GET', 'PATCH'])
+@login_required
 def edit_offer(id):
     # connect to the database
-    offers = db.offers
-
-    # find one and update
-    offers.find_one({'_id': ObjectId(id)})
 
     # get form
     form = DetailForm(request.form)
     data = request.form
 
-    # populate article form fields
-    form.title.data = offers['Title']
-    form.overview.data = offers['Overview']
-    form.itinerary.data = offers['Itinerary']
-    form.inclusion.data = offers['Inclusion']
-    form.price.data = offers['Price']
-    form.addinfo.data = offers['AddInfo']
-
-    if request.method == 'POST':
+    if request.method == 'PATCH':
         title = request.form['title']
         overview = request.form['overview']
         itinerary = request.form['itinerary']
@@ -282,32 +280,25 @@ def edit_offer(id):
             'CreatedAt': datetime.datetime.now(),
         }
 
-        # update the article
-        offers.update_one(update=update_offer)
+        # connect to db
+        offers = mongo.offers
+
+        # find one and update
+        offers.find_one_and_update(
+            filter={'_id': ObjectId(id)}, update=update_offer)
 
         flash('Offer has been updated', 'success')
         print('updated successfully')
 
-        return redirect(url_for('show_offers'))
+        return redirect(url_for('api.show_offers'))
     return render_template('edit_offers.html', form=form)
 
 # data from frontend
-@app.route('/api/uploadDetail', methods=['POST'])
+@api.route('/api/uploadDetail', methods=['POST', 'GET'])
 def get_data():
     if request.method == 'POST':
         data = request.data
         new_data = literal_eval(data.decode('utf-8'))
-
-        email_object = {
-            'Name': new_data['Name'],
-            'Email': new_data['Email'],
-            'Package': new_data['Package'],
-            'Depature': new_data['Departure'],
-            'Adult': new_data['Adults'],
-            'Children': new_data['Children'],
-            'Bugdet': new_data['Budget'],
-            'Addinfo': new_data['Info']
-        }
 
         msg_string = 'Name: ' + new_data['Name'] + '\n' + 'Email: ' + new_data['Email'] + '\n' + ' Nationality: ' + new_data['Nationality'] + '\n' + ' Number: ' + new_data['Number'] + '\n' + ' Departure: ' + \
             new_data['Departure'] + '\n' + ' Adults: ' + new_data['Adults'] + '\n' + ' Children: ' + \
@@ -317,7 +308,7 @@ def get_data():
         # sending email information to vacay email
         msg = Message(From=new_data['Email'],
                       To='newtonmbugua95@gmail.com', charset='utf-8')
-        msg.CC = 'dkimani@vacay.co.ke'
+        msg.CC = 'newtonmbugua95@gmail.com'
         msg.Subject = new_data['Package']
         msg.Body = msg_string
 
@@ -327,13 +318,31 @@ def get_data():
         sender.login(usr, pwd)
         sender.send(msg)
 
+        print('** email sent ***')
+
+        # email object
+        email_object = {
+            'Name': new_data['Name'],
+            'Email': new_data['Email'],
+            'Nationality': new_data['Nationality'],
+            'Package': new_data['Package'],
+            'Depature': new_data['Departure'],
+            'Adult': new_data['Adults'],
+            'Children': new_data['Children'],
+            'Bugdet': new_data['Budget'],
+            'Addinfo': new_data['Info'],
+            'CreadetAt': datetime.datetime.now()
+        }
+
         # connect to database
         try:
             emails = db.emails
-
             emails.insert_one(email_object)
-            print('added to the database')
+            print('*** added to the database ***')
         except Exception as error:
             print('could not add to the database due to', error)
+    else:
+        msg = 'Page not available'
+        return render_template('notfound.html', msg=msg)
 
-    return jsonify(new_data)
+    return jsonify(email_object)

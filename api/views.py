@@ -1,5 +1,4 @@
 # imports
-
 from . import db
 from flask import render_template, redirect, url_for, flash, request, jsonify, Blueprint, session
 from .models import User

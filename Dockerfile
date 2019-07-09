@@ -1,0 +1,18 @@
+FROM ubuntu:latest
+
+MAINTAINER Newton 
+
+RUN apt-get update -y
+
+RUN apt-get install python-pip python-dev build-essential
+
+WORKDIR /app
+
+COPY . /app
+
+RUN pip install -r requirements.txt
+
+ENTRYPOINT [ "python" ]
+
+CMD [ "app.py" ]
+

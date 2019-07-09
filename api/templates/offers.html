@@ -1,7 +1,7 @@
 {% extends 'layouts.html' %} {% block body %}
 <div class="offers--container">
   <div class="users">
-    <a href="{{ url_for('api.add_offer') }}" class="btn btn-primary add-offer"
+    <a href="{{ url_for('main.add_offer') }}" class="btn btn-primary add-offer"
       ><i class="fas fa-plus"><span>add offer</span></i></a
     >
   </div>
@@ -18,7 +18,7 @@
         <i class="fas fa-pencil-alt"><span>edit</span></i>
       </a>
 
-      <form action="{{url_for('api.delete_offer', id=offer['id'])}}">
+      <form action="{{url_for('main.delete_offer', id=offer['id'])}}">
         <button type="submit" class="icon">
           <i class="fas fa-trash-alt"> <span>delete</span></i>
         </button>
@@ -30,7 +30,7 @@
       </a>
 
       <form
-        action="{{url_for('api.delete_offer', id=offer['id'])}}"
+        action="{{url_for('main.delete_offer', id=offer['id'])}}"
         method="POST"
       >
         <button type="submit" class="icon">

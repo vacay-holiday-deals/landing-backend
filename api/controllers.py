@@ -7,19 +7,16 @@ from flask import request, redirect, url_for, flash
 import cloudinary
 from cloudinary import uploader
 
-
+# load env variables
 load_dotenv(verbose=True)
 
 # functions to do things
 
-# upload to cloudinary
 
-
+# upload file to cloudinary
 def upload(file):
-    if request.method == 'POST':
-        urls = []
-        res = cloudinary.uploader.upload(file, folder='Projects/vacay')
-        result = res['secure_url']
+    res = cloudinary.uploader.upload(file, folder='Projects/vacay')
+    result = res['secure_url']
     return result
 
 
@@ -28,17 +25,8 @@ def upload(file):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
+# handle unauthorised visits
 @login_manager.unauthorized_handler
 def unauthorized():
     flash('login to access page')
-    return redirect(url_for('api.login'))
-
-
-# add offer to mongodb
-def push_offer(offer):
-    try:
-        insert
-
-    except Exception as error:
-        return jsonify({'msg': str(error)})
+    return redirect(url_for('main.login'))

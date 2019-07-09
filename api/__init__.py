@@ -73,8 +73,10 @@ def create_app():
     login_manager.init_app(app)
 
     # import blueprint from views
-    from .views import api
+    from .views import main
+    from .apiviews import api
 
+    app.register_blueprint(main)
     app.register_blueprint(api)
 
     return app

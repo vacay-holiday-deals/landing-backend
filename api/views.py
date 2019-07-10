@@ -256,15 +256,14 @@ def get_data():
             ' Additional information: ' + new_data['Info']
 
         # sending email information to vacay email
-        msg = Message(From=new_data['Email'],
-                      To='newtonmbugua95@gmail.com', charset='utf-8')
+        msg = Message(To='newtonmbugua95@gmail.com', charset='utf-8')
         msg.CC = 'newtonmbugua95@gmail.com'
         msg.Subject = new_data['Package']
         msg.Body = msg_string
 
         sender = Mailer(host='smtp.gmail.com', use_tls=True)
         usr = 'mymbugua@gmail.com'
-        pwd = 'Ahou-smil3y-fac3'
+        pwd = os.getenv('PASSWORD')
         sender.login(usr, pwd)
         sender.send(msg)
 
@@ -286,11 +285,12 @@ def get_data():
 
         # connect to database
         try:
-            emails = db.emails
+            emails = mongo.emails
             emails.insert_one(email_object)
-            print('*** added to the database ***')
+            return jsonify({'Message': 'added email to database'})
         except Exception as error:
             print('could not add to the database due to', error)
+            return jsonify({'Message': 'something went wrong' + str(error)})
     else:
         msg = 'Page not available'
         return render_template('notfound.html', msg=msg)

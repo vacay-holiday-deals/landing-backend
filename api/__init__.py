@@ -7,13 +7,11 @@ from dotenv import load_dotenv
 from flask_assets import Environment, Bundle
 import cloudinary
 from flask_login import LoginManager
-from flask_dropzone import Dropzone
 
 
 db = SQLAlchemy()
 cors = CORS()
 login_manager = LoginManager()
-dropzone = Dropzone()
 assets = Environment()
 
 
@@ -21,9 +19,7 @@ css = Bundle('css/root.css', 'css/layouts.css', 'css/navbar.css',
              'css/index.css', 'css/login.css', 'css/offers.css', 'css/edit_offers.css', 'css/add_offers.css', output='gen/main.css')
 
 
-# define the app
-
-
+# create the app function
 def create_app():
     app = Flask(__name__)
 
@@ -43,6 +39,7 @@ def create_app():
 
     # app config
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DB_URI')
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # initialise the database
     db.init_app(app)
@@ -65,9 +62,6 @@ def create_app():
         api_key=os.getenv('API_KEY'),
         api_secret=os.getenv('API_SECRET')
     )
-
-    # initialise dropzone
-    dropzone.init_app(app)
 
     # initialise app with flask login manager
     login_manager.init_app(app)

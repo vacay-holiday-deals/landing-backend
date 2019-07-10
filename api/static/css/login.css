@@ -56,7 +56,7 @@ textarea {
 }
 
 @media only screen and (min-width: 320px) and (max-width: 700px) {
-  .container {
+  .login--container {
     width: 100% !important;
     margin: 0 !important;
   }

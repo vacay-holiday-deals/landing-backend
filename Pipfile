@@ -21,7 +21,8 @@ gunicorn = "*"
 mailer = "*"
 flask-sqlalchemy = "*"
 flask-talisman = "*"
-flask-jwt-extended = "*"
+flask-fontawesome = "*"
+flask-ckeditor = "*"
 
 [requires]
 python_version = "3.6"

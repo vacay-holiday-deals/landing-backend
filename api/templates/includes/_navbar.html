@@ -16,6 +16,10 @@
         ><i class="fas fa-sign-out-alt"><span>Logout</span></i></a
       >
     </div>
+    {% else %}
+    <a href="{{ url_for('main.login') }}" class="btn btn-primary login-btn"
+      >Login</a
+    >
     {% endif %}
   </div>
 </nav>

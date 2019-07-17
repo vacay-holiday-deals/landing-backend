@@ -1,6 +1,6 @@
 .login--container {
   width: 40%;
-  margin: -1rem 30%;
+  margin: -1rem 30% !important;
   border: 0.5px solid #d4d4d4;
   border-radius: 3px;
   padding: 5px 30px;
@@ -33,7 +33,7 @@ label {
 
 .form-control,
 textarea {
-  border-radius: 2px;
+  border-radius: 2px !important;
   height: 3rem !important;
   max-width: 100%;
 }

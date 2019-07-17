@@ -8,16 +8,21 @@ from flask_assets import Environment, Bundle
 import cloudinary
 from flask_login import LoginManager
 from itsdangerous import URLSafeSerializer
+from flask_fontawesome import FontAwesome
+from flask_ckeditor import CKEditor
 
 
 db = SQLAlchemy()
 cors = CORS()
 login_manager = LoginManager()
 assets = Environment()
+fa = FontAwesome()
+ckeditor = CKEditor()
 
 
 css = Bundle('css/root.css', 'css/layouts.css', 'css/navbar.css',
              'css/index.css', 'css/login.css', 'css/offers.css', 'css/edit_offers.css', 'css/add_offers.css', output='gen/main.css')
+js = Bundle('js/editor.js', output='gen/main.js')
 
 
 # create the app function
@@ -27,16 +32,20 @@ def create_app():
     # prevents crossite scripting
     cors.init_app(app)
 
-    # prevents crossite scripting and sql injection
+    ckeditor.init_app(app)
 
     # initialise all css js assets
     assets.init_app(app)
 
     # load the static files
     assets.register('css_all', css)
+    assets.register('js_all', js)
 
     # load environmental variables
     load_dotenv(verbose=True)
+
+    # fontawesome configuration
+    fa.init_app(app)
 
     # app config
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DB_URI')

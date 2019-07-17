@@ -2,6 +2,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, IntegerField, StringField, PasswordField,  MultipleFileField
 from wtforms.validators import DataRequired, length, regexp
+from flask_ckeditor import CKEditorField
 
 # detail form class
 
@@ -11,14 +12,14 @@ class DetailForm(FlaskForm):
                              regexp('\w+\.(jpg|jpeg|png)')])
     title = StringField('Title', validators=[
                         DataRequired, length(min=1, max=200)], )
-    overview = TextAreaField('Overview', validators=[
+    overview = CKEditorField('Overview', validators=[
                              DataRequired, length(min=100)])
-    itinerary = TextAreaField('Itinerary', validators=[
+    itinerary = CKEditorField('Itinerary', validators=[
                               DataRequired, length(min=100)])
-    inclusion = TextAreaField('Inclusion', validators=[
+    inclusion = CKEditorField('Inclusion', validators=[
                               DataRequired, length(min=100)])
-    price = TextAreaField('Price', validators=[DataRequired, length(min=100)])
-    addinfo = TextAreaField('Additional information',
+    price = CKEditorField('Price', validators=[DataRequired, length(min=100)])
+    addinfo = CKEditorField('Additional information',
                             validators=[DataRequired, length(min=100)])
 
 # user registration form, only accessible to the admin

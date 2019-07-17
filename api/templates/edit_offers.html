@@ -1,7 +1,4 @@
-{% extends 'layouts.html'%} {% block header %} {% endblock header %} {% block
-body %}
-
-<!--Html-->
+{% extends 'layouts.html'%} {% block body %}
 <div class="container">
   <div class="users">
     <div class="form-btns">
@@ -17,76 +14,35 @@ body %}
 
   <form action="" class="form" method="POST" enctype="multipart/form-data">
     <div class="form-group">
-      <label for="file">Files</label>
-      <input
-        type="file"
-        class="form-control"
-        id="file"
-        placeholder="title"
-        name="file"
-        accept="image/png, image/jpeg, image/jpg"
-        multiple
-      />
+      {{ render_field(form.file, class_='form-control')}}
+      <div class="container-fluid image-container ">
+        {% for image in images %}
+        <div class="card card-item">
+          <a href="">
+            <img src="{{ image }}" alt="image" class="res-image" />
+            <i class="fas fa-times"></i>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
     </div>
     <div class="form-group">
-      <label for="title">Title</label>
-      <input
-        type="text"
-        class="form-control"
-        id="title"
-        placeholder="title"
-        name="title"
-      />
+      {{ render_field(form.title, class_='form-control')}}
     </div>
     <div class="form-group">
-      <label for="overview">Overview</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="ovditor"
-        placeholder="overview"
-        name="overview"
-      ></textarea>
+      {{ render_field(form.overview, class_='form-control-textarea', id='oveditor')}}
     </div>
     <div class="form-group">
-      <label for="itinerary">Itinerary</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="itedtor"
-        placeholder="itinerary"
-        name="itinerary"
-      ></textarea>
+      {{ render_field(form.itinerary, class_='form-control-textarea', id='iteditor')}}
     </div>
     <div class="form-group">
-      <label for="inclusion">Inclusion</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="inedior"
-        placeholder="inclusion"
-        name="inclusion"
-      ></textarea>
+      {{ render_field(form.inclusion, class_='form-control-textarea', id='ineditor')}}
     </div>
     <div class="form-group">
-      <label for="price">Price</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="predtor"
-        placeholder="price"
-        name="price"
-      ></textarea>
+      {{ render_field(form.price, class_='form-control-textarea', id='preditor')}}
     </div>
     <div class="form-group">
-      <label for="addinfo">Additional Information</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="adinditor"
-        placeholder="Additional information"
-        name="addinfo"
-      ></textarea>
+      {{ render_field(form.addinfo, class_='form-control-textarea', id='adineditor')}}
     </div>
 
     <button type="submit" class="btn btn-primary btn-block btn-lg">
@@ -95,4 +51,4 @@ body %}
   </form>
 </div>
 
-{% endblock body%}
+{% endblock body %}

@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from flask_assets import Environment, Bundle
 import cloudinary
 from flask_login import LoginManager
+from itsdangerous import URLSafeSerializer
 
 
 db = SQLAlchemy()
@@ -47,6 +48,7 @@ def create_app():
     # create a secret key
     SECRET_KEY = os.urandom(64)
     app.config['SECRET_KEY'] = SECRET_KEY
+    serial = URLSafeSerializer(app.secret_key)
 
     # update the app config
     app.config.update(

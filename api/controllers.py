@@ -30,3 +30,8 @@ def load_user(user_id):
 def unauthorized():
     flash('login to access page')
     return redirect(url_for('main.login'))
+
+
+def clicked():
+    print(' i was clicked')
+    return 'hello world'

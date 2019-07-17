@@ -9,8 +9,17 @@
   {% for offer in output %}
   <div class="card offer--card">
     <div class="content">
-      <h5 class="content--title">{{ offer["title"] }}</h5>
-      <p class="content--paragraph">{{ offer["created"].date() }}</p>
+      <div>
+        <h5 class="content--title">{{ offer["title"] }}</h5>
+        <p class="content--paragraph">{{ offer["created"].date() }}</p>
+      </div>
+
+      <a
+        href="http://localhost:3000/{{ offer['title'] }}"
+        class="btn btn-primary add-offer"
+        target="_blank"
+        ><i class="fas fa-eye"><span>view page</span> </i></a
+      >
     </div>
     <div class="icons">
       {% if current_user.role == 'admin' %}

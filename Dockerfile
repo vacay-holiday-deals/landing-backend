@@ -1,7 +1,5 @@
 FROM ubuntu:latest
 
-MAINTAINER Newton 
-
 RUN apt-get update -y
 
 RUN apt-get install python-pip python-dev build-essential

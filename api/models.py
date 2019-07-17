@@ -4,8 +4,6 @@ from datetime import datetime
 
 
 # users db model
-
-
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))

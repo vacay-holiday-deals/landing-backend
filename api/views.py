@@ -1,21 +1,21 @@
 # imports
-from . import db
-from flask import render_template, redirect, url_for, flash, request, jsonify, Blueprint, session
-from .models import User
-from flask_login import login_user, current_user, logout_user, login_required
-from bcrypt import hashpw, gensalt
-from .forms import RegisterForm, DetailForm, LoginForm
-from functools import wraps
-from bson import ObjectId
 import os
 import datetime
+from . import db
 import cloudinary
-from cloudinary import uploader
-from dotenv import load_dotenv
+from .models import User
+from bson import ObjectId
+from functools import wraps
 from ast import literal_eval
-from mailer import Mailer, Message
+from dotenv import load_dotenv
+from cloudinary import uploader
 from .controllers import upload
+from mailer import Mailer, Message
+from bcrypt import hashpw, gensalt
 from flask_pymongo import MongoClient
+from .forms import RegisterForm, DetailForm, LoginForm
+from flask_login import login_user, current_user, logout_user, login_required
+from flask import render_template, redirect, url_for, flash, request, jsonify, Blueprint
 
 # initialise blueprint
 main = Blueprint('main', __name__)
@@ -70,7 +70,7 @@ def register():
 # login route
 @main.route('/login', methods=['POST', 'GET'])
 def login():
-    #form = LoginForm()
+    # form = LoginForm()
     if request.method == 'POST':
         # get value from field
         try:
@@ -87,7 +87,7 @@ def login():
                     flash('you have been logged in successfully', 'success')
                     return redirect(url_for('main.show_offers'))
                 else:
-                    error = 'invalid login, check username of password'
+                    error = 'invalid login, check username or password'
                     return render_template('login.html', error=error)
             else:
                 error = 'username not found'
@@ -114,7 +114,7 @@ def add_offer():
     if request.method == 'POST':
 
         # get files from input files
-        files = request.files.getlist('file')
+        files = form.file.data
         file = []
         for f in files:
             # upload each file
@@ -122,12 +122,12 @@ def add_offer():
             # append result to empty list
             file.append(result)
 
-        title = request.form['title']
-        overview = request.form['overview']
-        itinerary = request.form['itinerary']
-        inclusion = request.form['inclusion']
-        price = request.form['price']
-        addinfo = request.form['addinfo']
+        title = form.title.data
+        overview = form.overview.data
+        itinerary = form.itinerary.data
+        inclusion = form.inclusion.data
+        price = form.price.data
+        addinfo = form.addinfo.data
 
         offer_item = {
             'Title': title,
@@ -136,8 +136,8 @@ def add_offer():
             'Inclusion': inclusion,
             'Price': price,
             'AddInfo': addinfo,
-            'CreatedAt': datetime.datetime.now(),
-            'Images':  file
+            'Images':  file,
+            'CreatedAt': datetime.datetime.now()
         }
 
         try:
@@ -152,7 +152,7 @@ def add_offer():
             msg = 'you face a problem please try again'
             return render_template('add_offers.html', msg=msg), jsonify({'Message': 'we found a problem ' + err})
 
-    return render_template('add_offers.html')
+    return render_template('add_offers.html', form=form)
 
 
 # show the offers available
@@ -183,21 +183,46 @@ def show_offers():
             return render_template('offers.html', output=output)
         except Exception as err:
             print("could not connect to collection due to ", err)
-    msg = 'Method not allowed'
-    return render_template('offers.html', msg=msg)
+
+    return render_template('offers.html')
 
 
 # route to edit offer
 @main.route('/editOffer/<string:id>', methods=['POST', 'GET'])
 @login_required
 def edit_offer(id):
-    # connect to the database
-
-    # get form
+    # get the form
     form = DetailForm(request.form)
-    data = request.form
+
+    # connect to db and get offer
+    offers = mongo.offers
+    offer = offers.find_one({'_id': ObjectId(id)})
+
+    # images
+    images = offer['Images']
+
+    # populate  fields
+    form.file.data = images
+    form.title.data = offer['Title']
+    form.overview.data = offer['Overview']
+    form.itinerary.data = offer['Itinerary']
+    form.inclusion.data = offer['Inclusion']
+    form.price.data = offer['Price']
+    form.addinfo.data = offer['AddInfo']
 
     if request.method == 'POST':
+        # get files from input files
+        files = form.file.data
+        file = offer['Images']
+        for f in files:
+            if not f:
+                return file
+                # upload each file
+            result = upload(f)
+            # append result to empty list
+        file.append(result)
+        print(file)
+
         title = request.form['title']
         overview = request.form['overview']
         itinerary = request.form['itinerary']
@@ -205,28 +230,21 @@ def edit_offer(id):
         price = request.form['price']
         addinfo = request.form['addinfo']
 
-        update_offer = {
-            'Title': title,
-            'Overview': overview,
-            'Itinerary': itinerary,
-            'Inclusion': inclusion,
-            'Price': price,
-            'AddInfo': addinfo,
-            'CreatedAt': datetime.datetime.now(),
-        }
+        update = {'Title': title,
+                  'Overview': overview,
+                  'Itinerary': itinerary,
+                  'Inclusion': inclusion,
+                  'Price': price,
+                  'AddInfo': addinfo,
+                  'Images': file,
+                  'CreatedAt': datetime.datetime.now()
+                  }
 
-        # connect to db
-        offers = mongo.offers
+        offers.update({'_id': ObjectId(id)}, update, True)
 
-        # find one and update
-        offers.find_one_and_update(
-            filter={'_id': ObjectId(id)}, update=update_offer)
-
-        flash('Offer has been updated', 'success')
-        print('updated successfully')
-
+        print('article successfully edited')
         return redirect(url_for('main.show_offers'))
-    return render_template('edit_offers.html', form=form)
+    return render_template('edit_offers.html', form=form, images=images)
 
 
 # route to delete an offer
@@ -241,58 +259,3 @@ def delete_offer(id):
         return redirect(url_for('main.show_offers'))
         flash('item deleted', 'success')
     return render_template('offers.html')
-
-
-# data from frontend
-@main.route('/uploadDetail', methods=['POST', 'GET'])
-def get_data():
-    if request.method == 'POST':
-        data = request.data
-        new_data = literal_eval(data.decode('utf-8'))
-
-        msg_string = 'Name: ' + new_data['Name'] + '\n' + 'Email: ' + new_data['Email'] + '\n' + ' Nationality: ' + new_data['Nationality'] + '\n' + ' Number: ' + new_data['Number'] + '\n' + ' Departure: ' + \
-            new_data['Departure'] + '\n' + ' Adults: ' + new_data['Adults'] + '\n' + ' Children: ' + \
-            new_data['Children'] + '\n' + \
-            ' Additional information: ' + new_data['Info']
-
-        # sending email information to vacay email
-        msg = Message(To='newtonmbugua95@gmail.com', charset='utf-8')
-        msg.CC = 'newtonmbugua95@gmail.com'
-        msg.Subject = new_data['Package']
-        msg.Body = msg_string
-
-        sender = Mailer(host='smtp.gmail.com', use_tls=True)
-        usr = 'mymbugua@gmail.com'
-        pwd = os.getenv('PASSWORD')
-        sender.login(usr, pwd)
-        sender.send(msg)
-
-        print('** email sent ***')
-
-        # email object
-        email_object = {
-            'Name': new_data['Name'],
-            'Email': new_data['Email'],
-            'Nationality': new_data['Nationality'],
-            'Package': new_data['Package'],
-            'Depature': new_data['Departure'],
-            'Adult': new_data['Adults'],
-            'Children': new_data['Children'],
-            'Bugdet': new_data['Budget'],
-            'Addinfo': new_data['Info'],
-            'CreadetAt': datetime.datetime.now()
-        }
-
-        # connect to database
-        try:
-            emails = mongo.emails
-            emails.insert_one(email_object)
-            return jsonify({'Message': 'added email to database'})
-        except Exception as error:
-            print('could not add to the database due to', error)
-            return jsonify({'Message': 'something went wrong' + str(error)})
-    else:
-        msg = 'Page not available'
-        return render_template('notfound.html', msg=msg)
-
-    return jsonify(email_object)

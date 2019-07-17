@@ -21,76 +21,25 @@
     enctype="multipart/form-data"
   >
     <div class="form-group">
-      <label for="file">Files</label>
-      <input
-        type="file"
-        class="form-control"
-        id="file"
-        placeholder="title"
-        name="file"
-        accept="image/png, image/jpeg, image/jpg"
-        multiple
-      />
+      {{render_field(form.file, class_='form-control')}}
     </div>
     <div class="form-group">
-      <label for="title">Title</label>
-      <input
-        type="text"
-        class="form-control"
-        id="title"
-        placeholder="title"
-        name="title"
-      />
+      {{render_field(form.title, class_="form-control")}}
     </div>
     <div class="form-group">
-      <label for="overview">Overview</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="oveitor"
-        placeholder="overview"
-        name="overview"
-      ></textarea>
+      {{render_field(form.overview, class_="form-control-textarea", id='oveditor')}}
     </div>
     <div class="form-group">
-      <label for="itinerary">Itinerary</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="iteitor"
-        placeholder="itinerary"
-        name="itinerary"
-      ></textarea>
+      {{render_field(form.itinerary, class_="form-control-textarea", id='iteditor')}}
     </div>
     <div class="form-group">
-      <label for="inclusion">Inclusion</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="inditor"
-        placeholder="inclusion"
-        name="inclusion"
-      ></textarea>
+      {{render_field(form.inclusion, class_="form-control-textarea", id='ineditor')}}
     </div>
     <div class="form-group">
-      <label for="price">Price</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="peditor"
-        placeholder="price"
-        name="price"
-      ></textarea>
+      {{render_field(form.price, class_="form-control-textarea", id='preditor')}}
     </div>
     <div class="form-group">
-      <label for="addinfo">Additional Information</label>
-      <textarea
-        type="text"
-        class="form-control-textarea"
-        id="aneditor"
-        placeholder="Additional information"
-        name="addinfo"
-      ></textarea>
+      {{render_field(form.addinfo, class_="form-control-textarea", id='adineditor')}}
     </div>
 
     <button type="submit" class="btn btn-primary btn-block btn-lg">

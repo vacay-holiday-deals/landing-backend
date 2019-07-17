@@ -239,6 +239,9 @@ textarea {
   flex-direction: row;
   align-items: center;
   margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .users {
@@ -418,6 +421,24 @@ textarea {
   margin: 15px 0;
   border: none !important;
   border-radius: 3px;
+}
+.image-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-gap: 5px;
+}
+.res-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 3px;
+}
+.card-item a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card-item a .fas {
+  font-size: 0.9rem;
 }
 
 .fas {

@@ -22,9 +22,10 @@ def get_offers():
                 print("successfully connected to collection")
 
                 offers = offer.find()
+                output = []
                 for offer in offers:
                     if offer:
-                        output = {
+                        output.append({
                             # 'id': offer['_id'],
                             'title': offer['Title'],
                             'overview': offer['Overview'],
@@ -34,8 +35,8 @@ def get_offers():
                             'addinfo': offer['AddInfo'],
                             'images': offer['Images'],
                             'created': offer['CreatedAt']
-                        }
-                return output
+                        })
+                return jsonify(output)
             except Exception as err:
                 print("could not connect to collection due to ", err)
         return jsonify({'msg': 'method not allowed'}), 405

@@ -32,6 +32,7 @@ def unauthorized():
     return redirect(url_for('main.login'))
 
 
-def clicked():
-    print(' i was clicked')
-    return 'hello world'
+def remove_image(array):
+    for item in array:
+        print(array.index(item))
+    return array

@@ -1,5 +1,6 @@
 {% extends 'layouts.html'%} {% block body %}
-<div class="container">
+{{ ckeditor.load(pkg_type="standard") }}
+<div class="edit--container">
   <div class="users">
     <div class="form-btns">
       <a
@@ -15,12 +16,12 @@
   <form action="" class="form" method="POST" enctype="multipart/form-data">
     <div class="form-group">
       {{ render_field(form.file, class_='form-control')}}
-      <div class="container-fluid image-container ">
+      <div class="container-fluid image-container " id="image-container">
         {% for image in images %}
         <div class="card card-item">
           <a href="">
             <img src="{{ image }}" alt="image" class="res-image" />
-            <i class="fas fa-times"></i>
+            <i class="fas fa-times" onclick=""></i>
           </a>
         </div>
         {% endfor %}

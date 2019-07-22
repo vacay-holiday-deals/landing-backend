@@ -22,7 +22,7 @@ ckeditor = CKEditor()
 
 css = Bundle('css/root.css', 'css/layouts.css', 'css/navbar.css',
              'css/index.css', 'css/login.css', 'css/offers.css', 'css/edit_offers.css', 'css/add_offers.css', output='gen/main.css')
-js = Bundle('js/editor.js', output='gen/main.js')
+js = Bundle('js/app.js', output='gen/main.js')
 
 
 # create the app function

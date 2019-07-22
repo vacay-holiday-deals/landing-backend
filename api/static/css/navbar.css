@@ -11,7 +11,7 @@
   height: auto;
   background: #ffffff !important;
   padding: 0 5px;
-  box-shadow: 5px 10px 20px 0px rgba(0, 0, 0, 0.09);
+  border-bottom: 0.5px solid var(--grey-2);
   display: flex !important;
   justify-content: space-between;
   align-items: center;

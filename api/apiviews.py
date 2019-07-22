@@ -8,6 +8,7 @@ import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
+from bson import ObjectId
 
 api = Blueprint('api', __name__)
 
@@ -128,7 +129,7 @@ def get_data():
 # get offer by name
 # endpoint to get article by id
 @api.route('/api/getoffer/<title>', methods=["GET"])
-def get_article(title):
+def get_offer(title):
     offers = mongo.offers
     try:
         offer = offers.find_one(filter={"Title": title})
@@ -153,3 +154,21 @@ def get_article(title):
         print("Fix the following error ", e)
 
     return output
+
+
+# get the images from array
+# {## Todo: fix the api}
+@api.route('/api/getimages/<string:id>', methods=['GET'])
+def get_images(id):
+    # connect to db
+    offers = mongo.offers
+
+    # create empty list
+    output = []
+    result = offers.find_one({'_id': ObjectId(id)})
+    if result:
+        output = {
+            'images': result['Images']
+        }
+    print(output)
+    return jsonify(output)

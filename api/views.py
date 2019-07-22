@@ -9,7 +9,7 @@ from functools import wraps
 from ast import literal_eval
 from dotenv import load_dotenv
 from cloudinary import uploader
-from .controllers import upload
+from .controllers import upload, remove_image
 from mailer import Mailer, Message
 from bcrypt import hashpw, gensalt
 from flask_pymongo import MongoClient
@@ -220,7 +220,7 @@ def edit_offer(id):
                 # upload each file
             result = upload(f)
             # append result to empty list
-        file.append(result)
+            file.append(result)
         print(file)
 
         title = request.form['title']
@@ -244,7 +244,7 @@ def edit_offer(id):
 
         print('article successfully edited')
         return redirect(url_for('main.show_offers'))
-    return render_template('edit_offers.html', form=form, images=images)
+    return render_template('edit_offers.html', form=form, images=images, remove=remove_image(images))
 
 
 # route to delete an offer

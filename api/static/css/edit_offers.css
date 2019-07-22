@@ -1,10 +1,10 @@
-.container {
+.edit--container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
-  width: 80% !important;
-  margin: 0 10% !important;
+  width: 70% !important;
+  margin: 0 15%;
 }
 
 .button {
@@ -44,6 +44,7 @@ textarea {
   justify-content: space-between;
   align-items: flex-start;
   position: relative;
+  padding: 0;
 }
 
 .form-btns {
@@ -52,6 +53,7 @@ textarea {
   align-items: center;
   align-content: flex-end;
   flex-direction: column;
+  padding: 0;
 }
 
 .viewoffers {

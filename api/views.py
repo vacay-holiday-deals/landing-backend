@@ -220,7 +220,7 @@ def edit_offer(id):
                 # upload each file
             result = upload(f)
             # append result to empty list
-            file.append(result)
+        file.append(result)
         print(file)
 
         title = request.form['title']

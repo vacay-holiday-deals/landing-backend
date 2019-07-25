@@ -23,6 +23,7 @@ flask-sqlalchemy = "*"
 flask-talisman = "*"
 flask-fontawesome = "*"
 flask-ckeditor = "*"
+flask-migrate = "*"
 
 [requires]
 python_version = "3.6"

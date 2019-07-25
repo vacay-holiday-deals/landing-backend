@@ -24,3 +24,9 @@ const handleClick = id => {
 
     .catch(error => console.log(error));
 };
+
+function handleSubmit(e, idName) {
+  Button = document.getElementById(String(id));
+  Button.classList.add("disabled");
+  spinner = document.getElementsByClassName("spinner").style.visibility = "visible";
+}

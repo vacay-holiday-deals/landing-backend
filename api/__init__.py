@@ -10,6 +10,7 @@ from flask_login import LoginManager
 from itsdangerous import URLSafeSerializer
 from flask_fontawesome import FontAwesome
 from flask_ckeditor import CKEditor
+from flask_migrate import Migrate
 
 
 db = SQLAlchemy()
@@ -18,7 +19,7 @@ login_manager = LoginManager()
 assets = Environment()
 fa = FontAwesome()
 ckeditor = CKEditor()
-
+migrate = Migrate()
 
 css = Bundle('css/root.css', 'css/layouts.css', 'css/navbar.css',
              'css/index.css', 'css/login.css', 'css/offers.css', 'css/edit_offers.css', 'css/add_offers.css', output='gen/main.css')
@@ -53,6 +54,7 @@ def create_app():
 
     # initialise the database
     db.init_app(app)
+    migrate.init_app(app, db)
 
     # create a secret key
     SECRET_KEY = os.urandom(64)

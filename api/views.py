@@ -38,6 +38,7 @@ def index():
 
 # register route
 @main.route('/register', methods=['POST'])
+@login_required
 def register():
     if request.method == 'POST':
         # get the json information to create a user
@@ -58,11 +59,9 @@ def register():
         try:
             db.session.add(new_user)
             db.session.commit()
-            print('*** user added ***')
-            return jsonify({'msg': 'user added successfully'})
+            return jsonify({'msg': 'user added successfully'}), 200
         except Exception as error:
-            print(error)
-            return jsonify({'msg': 'found error'})
+            return jsonify({'msg': 'found error'}), 400
 
     return jsonify({'msg': 'method not allowed'}), 405
 
@@ -90,11 +89,11 @@ def login():
                     error = 'invalid login, check username or password'
                     return render_template('login.html', error=error)
             else:
-                error = 'username not found'
-                flash('username not found', 'danger')
+                error = 'invalid login, check your username or password'
+                flash(error, 'danger')
                 return render_template('login.html', error=error)
         except Exception as error:
-            print('could not continue due to ', error)
+            return jsonify({'Message': error})
     return render_template('login.html')
 
 
@@ -142,7 +141,6 @@ def add_offer():
 
         try:
             offers = mongo.offers
-            print("connected successfully to collection")
             offers.insert_one(offer_item)
             flash("added offer successfully", 'success')
             return redirect(url_for('main.show_offers'))
@@ -163,7 +161,6 @@ def show_offers():
         output = []
         try:
             offer = mongo.offers
-            print("successfully connected to collection")
 
             offers = offer.find()
             for offer in offers:
@@ -182,7 +179,7 @@ def show_offers():
 
             return render_template('offers.html', output=output)
         except Exception as err:
-            print("could not connect to collection due to ", err)
+            return jsonify({'Message': err})
 
     return render_template('offers.html')
 
@@ -221,7 +218,6 @@ def edit_offer(id):
             result = upload(f)
             # append result to empty list
         file.append(result)
-        print(file)
 
         title = request.form['title']
         overview = request.form['overview']
@@ -242,9 +238,9 @@ def edit_offer(id):
 
         offers.update({'_id': ObjectId(id)}, update, True)
 
-        print('article successfully edited')
+        flash('article successfully edited')
         return redirect(url_for('main.show_offers'))
-    return render_template('edit_offers.html', form=form, images=images, remove=remove_image(images))
+    return render_template('edit_offers.html', form=form, images=images, remove=remove_image(images), id=id)
 
 
 # route to delete an offer
@@ -256,6 +252,6 @@ def delete_offer(id):
 
         # find item to delete
         offers.delete_one({'_id': ObjectId(id)})
-        return redirect(url_for('main.show_offers'))
         flash('item deleted', 'success')
+        return redirect(url_for('main.show_offers'))
     return render_template('offers.html')

@@ -38,6 +38,9 @@ textarea {
   font-size: 1rem;
   font-family: var(--primary-font), sans-serif;
 }
+.fa-times {
+  color: #e73846;
+}
 
 .users {
   display: flex;

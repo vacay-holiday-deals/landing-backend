@@ -16,6 +16,7 @@
   <h4 class="heading">Fill the form to add the offers</h4>
 
   <form
+    onsubmit="handleSubmit()"
     action="{{ url_for('main.add_offer') }}"
     class="form"
     method="POST"
@@ -43,10 +44,28 @@
       {{render_field(form.addinfo, class_="form-control-textarea", id='adineditor')}}
     </div>
 
-    <button type="submit" class="btn btn-primary btn-block btn-lg">
+    <button
+      id="add--btn"
+      type="submit"
+      class="btn btn-primary btn-block btn-lg"
+    >
       Submit
+      <span
+        id="add-spinner"
+        style="visibility: hidden"
+        class="spinner-border spinner-border-sm"
+      ></span>
     </button>
   </form>
 </div>
+
+<script>
+  function handleSubmit(e) {
+    loginButton = document.getElementById("add--btn");
+    loginButton.classList.add("disabled");
+    spinner = document.getElementById("add-spinner").style.visibility =
+      "visible";
+  }
+</script>
 
 {% endblock body%}

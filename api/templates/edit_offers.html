@@ -13,7 +13,13 @@
   {% from 'includes/_formhelpers.html' import render_field %}
   <h4 class="heading">Fill the form to add the offers</h4>
 
-  <form action="" class="form" method="POST" enctype="multipart/form-data">
+  <form
+    onsubmit="handleSubmit()"
+    action=""
+    class="form"
+    method="POST"
+    enctype="multipart/form-data"
+  >
     <div class="form-group">
       {{ render_field(form.file, class_='form-control')}}
       <div class="container-fluid image-container " id="image-container">
@@ -21,7 +27,11 @@
         <div class="card card-item">
           <a href="">
             <img src="{{ image }}" alt="image" class="res-image" />
-            <i class="fas fa-times" onclick=""></i>
+            <form action="" methods="POST">
+              <button class=" btn--times ">
+                <i class="fas fa-times"></i>
+              </button>
+            </form>
           </a>
         </div>
         {% endfor %}
@@ -46,10 +56,28 @@
       {{ render_field(form.addinfo, class_='form-control-textarea', id='adineditor')}}
     </div>
 
-    <button type="submit" class="btn btn-primary btn-block btn-lg">
+    <button
+      id="edit--btn"
+      type="submit"
+      class="btn btn-primary btn-block btn-lg"
+    >
       Submit
+      <span
+        id="edit-spinner"
+        style="visibility: hidden"
+        class="spinner-border spinner-border-sm"
+      ></span>
     </button>
   </form>
 </div>
+
+<script>
+  function handleSubmit(e) {
+    loginButton = document.getElementById("edit--btn");
+    loginButton.classList.add("disabled");
+    spinner = document.getElementById("edit-spinner").style.visibility =
+      "visible";
+  }
+</script>
 
 {% endblock body %}

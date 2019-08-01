@@ -20,10 +20,10 @@ flask-wtf = "*"
 gunicorn = "*"
 mailer = "*"
 flask-sqlalchemy = "*"
-flask-talisman = "*"
 flask-fontawesome = "*"
 flask-ckeditor = "*"
 flask-migrate = "*"
+flask-dropzone = "*"
 
 [requires]
 python_version = "3.6"

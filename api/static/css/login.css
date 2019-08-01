@@ -1,3 +1,16 @@
+.home--container {
+  height: 88vh;
+  width: 99.95vw;
+  background-image: url("/static/images/vacay.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 10px;
+  margin: 0;
+  margin-top: -4.3rem;
+  position: relative;
+}
+
 .login--container {
   width: 30%;
   border: 0.5px solid #d4d4d4;
@@ -7,6 +20,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -40%);
+  background: var(--white);
 }
 .form--logo {
   object-fit: contain;

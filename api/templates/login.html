@@ -1,59 +1,45 @@
 {% extends 'layouts.html' %} {% block body %}
-
-<div class="login--container">
-  <form
-    onsubmit="handleSubmit()"
-    action="{{ url_for('main.login') }}"
-    method="post"
-  >
-    <div class="form--logo">
-      <img
-        src="{{url_for('static', filename='images/logo.png')}}"
-        alt="company logo"
-      />
-    </div>
-    <h4 class="form--heading">Please Login</h4>
-    <div class="form-group">
-      <label for="username">Username</label>
-      <input
-        type="text"
-        class="form-control"
-        id="username"
-        placeholder="Username"
-        name="username"
-        required
-      />
-    </div>
-    <div class="form-group">
-      <label for="password">password</label>
-      <input
-        type="password"
-        class="form-control"
-        id="password"
-        placeholder="password"
-        name="password"
-        required
-      />
-    </div>
-    <div class="button">
-      <button id="login--btn" type="submit" class="btn btn-primary btn-block">
-        Login
-        <span
-          id="spinner"
-          style="visibility: hidden"
-          class="spinner-border spinner-border-sm"
-        ></span>
-      </button>
-    </div>
-  </form>
-  <br />
-  <p>
-    Found problems?
-    <a
-      href="MAILTO:info@vacay.co.ke.com?cc=mymbugua@gmail.com&subject=problem with login"
-      >contact admin</a
+<div class="home--container">
+  <div class="login--container">
+    {% from 'includes/_formhelpers.html' import render_field %}
+    <form
+      onsubmit="handleSubmit()"
+      action="{{ url_for('main.login') }}"
+      method="post"
     >
-  </p>
+      <div class="form--logo">
+        <img
+          src="{{url_for('static', filename='images/logo.png')}}"
+          alt="company logo"
+        />
+      </div>
+      <h4 class="form--heading">Please Login</h4>
+      <div class="form-group">
+        {{ render_field(form.username, class_='form-control', id='username', placeholder='username')}}
+      </div>
+      <div class="form-group">
+        {{ render_field(form.password, class_='form-control', id='password', placeholder='password')}}
+      </div>
+      <div class="button">
+        <button id="login--btn" type="submit" class="btn btn-primary btn-block">
+          Login
+          <span
+            id="spinner"
+            style="visibility: hidden"
+            class="spinner-border spinner-border-sm"
+          ></span>
+        </button>
+      </div>
+    </form>
+    <br />
+    <p>
+      Found problems?
+      <a
+        href="MAILTO:sales@vacay.co.ke.com?cc=mymbugua@gmail.com&subject=problem with login"
+        >contact admin</a
+      >
+    </p>
+  </div>
 </div>
 
 <script>

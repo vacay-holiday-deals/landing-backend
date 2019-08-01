@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9eef9478f11128010ae622ae48d4b17c5b464c273ac2c3bb0b202eea439675f1"
+            "sha256": "df25a50da446654c9a3500155441672bb1e2d7e08dededbb57df88c0e80b13dc"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -93,10 +93,10 @@
         },
         "cloudinary": {
             "hashes": [
-                "sha256:73ba5a634483d12cfdfb3ebf8354f1ac0a62ee866b49d52950ff871ac64e31c0"
+                "sha256:d1337ea54046f91b30f491fbdaa805ccbb0b054cf5d37eac8e4e78006c7532b0"
             ],
             "index": "pypi",
-            "version": "==1.16.0"
+            "version": "==1.17.0"
         },
         "dnspython": {
             "hashes": [
@@ -137,6 +137,14 @@
             "index": "pypi",
             "version": "==3.0.8"
         },
+        "flask-dropzone": {
+            "hashes": [
+                "sha256:1860c7cc07f38a2ef9a5e29cd217638c6efec5665a6b319aa9e1fc3b992d6125",
+                "sha256:6c685bcf889ff7bb289de1cb7347aa87128e4daaec79820472ac4bf0a4058a1a"
+            ],
+            "index": "pypi",
+            "version": "==1.5.3"
+        },
         "flask-fontawesome": {
             "hashes": [
                 "sha256:91e3be7a7205d505015697248bb30eb2b3ca27fe14a18893ad7049b703ffa98f",
@@ -175,14 +183,6 @@
             ],
             "index": "pypi",
             "version": "==2.4.0"
-        },
-        "flask-talisman": {
-            "hashes": [
-                "sha256:468131464a249274ed226efc21b372518f442487e58918ccab8357eaa638fd1f",
-                "sha256:eaa754f4b771dfbe473843391d69643b79e3a38c865790011ac5e4179c68e3ec"
-            ],
-            "index": "pypi",
-            "version": "==0.7.0"
         },
         "flask-wtf": {
             "hashes": [

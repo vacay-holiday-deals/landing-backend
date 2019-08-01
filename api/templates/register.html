@@ -1,0 +1,60 @@
+{% extends 'layouts.html' %} {% block body %}
+
+<div class="login--container mt-5 mb-3">
+  {% from 'includes/_formhelpers.html' import render_field %}
+  <form
+    onsubmit="handleSubmit()"
+    action="{{ url_for('main.register') }}"
+    method="post"
+  >
+    <div class="form--logo">
+      <img
+        src="{{url_for('static', filename='images/logo.png')}}"
+        alt="company logo"
+      />
+    </div>
+    <h4 class="form--heading">Create an account</h4>
+    <div class="form-group">
+      {{ render_field(form.name, class_="form-control", id="name", placeholder="name") }}
+    </div>
+    <div class="form-group">
+      {{render_field(form.email, class_="form-control", id="email", placeholder="email")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.username, class_="form-control", id="username", placeholder="username")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.role, class_="form-control", id="role", placeholder="role")}}
+    </div>
+    <div class="form-group">
+      {{render_field(form.password, class_="form-control", id="password", placeholder="password")}}
+    </div>
+    <div class="button">
+      <button id="login--btn" type="submit" class="btn btn-primary btn-block">
+        Login
+        <span
+          id="spinner"
+          style="visibility: hidden"
+          class="spinner-border spinner-border-sm"
+        ></span>
+      </button>
+    </div>
+  </form>
+  <br />
+  <p>
+    Found problems?
+    <a
+      href="MAILTO:sales@vacay.co.ke.com?cc=mymbugua@gmail.com&subject=problem with login"
+      >contact admin</a
+    >
+  </p>
+</div>
+
+<script>
+  function handleSubmit(e) {
+    loginButton = document.getElementById("login--btn");
+    loginButton.classList.add("disabled");
+    spinner = document.getElementById("spinner").style.visibility = "visible";
+  }
+</script>
+{% endblock body%}

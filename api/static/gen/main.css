@@ -161,10 +161,10 @@ a:hover {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  padding: 10px;
   text-align: center;
+  padding: 10px;
   margin: 0;
-  margin-top: -1.3rem;
+  margin-top: -4.3rem;
   position: relative;
 }
 h3 {
@@ -179,10 +179,24 @@ h3 {
 @media only screen and (min-width: 320px) and (max-width: 700px) {
   .home {
     width: 100%;
+    margin-top: -6.3rem;
   }
   h3 {
     font-size: 1rem;
   }
+}
+
+.home--container {
+  height: 88vh;
+  width: 99.95vw;
+  background-image: url("/static/images/vacay.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: 10px;
+  margin: 0;
+  margin-top: -4.3rem;
+  position: relative;
 }
 
 .login--container {
@@ -194,6 +208,7 @@ h3 {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -40%);
+  background: var(--white);
 }
 .form--logo {
   object-fit: contain;

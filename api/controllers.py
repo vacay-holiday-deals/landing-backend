@@ -31,8 +31,3 @@ def unauthorized():
     flash('login to access page')
     return redirect(url_for('main.login'))
 
-
-def remove_image(array):
-    for item in array:
-        print(array.index(item))
-    return array

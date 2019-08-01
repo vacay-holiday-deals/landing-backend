@@ -20,8 +20,6 @@ def get_offers():
 
             try:
                 offer = mongo.offers
-                print("successfully connected to collection")
-
                 offers = offer.find()
                 output = []
                 for offer in offers:
@@ -39,34 +37,14 @@ def get_offers():
                         })
                 return jsonify(output)
             except Exception as err:
-                print("could not connect to collection due to ", err)
-        return jsonify({'msg': 'method not allowed'}), 405
+                return jsonify({"Message": "sould not connect to the database"}), 400
+        return jsonify({'Message': 'method not allowed'}), 405
     except Exception as error:
-        print('something happened', error)
-
-
-# return all users
-# get all users route
-@api.route('/api/getusers', methods=['GET'])
-def get_users():
-    if request.method == 'GET':
-        # get all the users
-        output = []
-        users = User.query.all()
-
-        for usr in users:
-            output.append({
-                'username': usr.username,
-                'password': usr.password.decode('utf-8'),
-                'email': usr.email,
-                'name': usr.name
-            })
-        return jsonify({'Output': output})
-    return jsonify({'msg': 'method not allowed'}), 405
+        return jsonify({'Message': "something went wrong"}), 400
 
 
 # data from frontend
-@api.route('/uploadDetail', methods=['POST'])
+@api.route('/api/uploadDetail', methods=['POST'])
 def get_data():
     if request.method == 'POST':
         usr = os.getenv('USR')
@@ -112,18 +90,13 @@ def get_data():
                 }
 
                 # connect to database
-                try:
-                    emails = mongo.emails
-                    emails.insert_one(email_object)
-                    return jsonify({'Message': 'added email to database'})
-                except Exception as error:
-                    return jsonify({'Message': 'something went wrong' + str(error)})
-                return jsonify({'Message': 'your information has been sent'})
+                emails = mongo.emails
+                emails.insert_one(email_object)
+                return jsonify({'Message': 'Thank you,information sent'}), 200
             except Exception as error:
-                print('we encountered a problem', error)
-                return jsonify({'Message': 'we encountered an error' + str(error)})
+                return jsonify({'Message': 'we encountered an error'}), 400
 
-    return jsonify({'Message': 'you encountered a problem'}), 405
+    return jsonify({'Message': 'you encountered a problem'}), 400
 
 
 # get offer by name
@@ -133,7 +106,6 @@ def get_offer(title):
     offers = mongo.offers
     try:
         offer = offers.find_one(filter={"Title": title})
-
         if offer:
             output = {
                 # 'id': offer['_id'],
@@ -149,26 +121,23 @@ def get_offer(title):
 
         else:
             return jsonify({"message": "could not get offer"})
-
     except Exception as e:
-        print("Fix the following error ", e)
-
+        return jsonify({"Message": "something went wrong"}), 400
     return output
 
 
-# get the images from array
-# {## Todo: fix the api}
-@api.route('/api/getimages/<string:id>', methods=['GET'])
-def get_images(id):
-    # connect to db
-    offers = mongo.offers
-
-    # create empty list
+@api.route('/api/getusers', methods=['GET'])
+def get_users():
+    users = User.query.all()
     output = []
-    result = offers.find_one({'_id': ObjectId(id)})
-    if result:
-        output = {
-            'images': result['Images']
-        }
-    print(output)
-    return jsonify(output)
+    for user in users:
+
+        output.append({
+            "name": user.name,
+            "username": user.username,
+            "email": user.email,
+            "password": str(user.password),
+            "role": user.role
+        })
+        return jsonify({"Output": output})
+    return users

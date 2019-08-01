@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_cors import CORS
@@ -11,7 +11,6 @@ from itsdangerous import URLSafeSerializer
 from flask_fontawesome import FontAwesome
 from flask_ckeditor import CKEditor
 from flask_migrate import Migrate
-
 
 db = SQLAlchemy()
 cors = CORS()
@@ -61,14 +60,6 @@ def create_app():
     app.config['SECRET_KEY'] = SECRET_KEY
     serial = URLSafeSerializer(app.secret_key)
 
-    # update the app config
-    app.config.update(
-        PERMANENT_SESSION_LIFETIME=30,
-        DROPZONE_ALLOWED_FILE_TYPE='image',
-        DROPZONE_MAX_FILE_SIZE=10,
-        DROPZONE_MAX_FILES=10,
-    )
-
     # cloudinary configuration
     cloudinary.config(
         cloud_name=os.getenv('CLOUD_NAME'),
@@ -78,6 +69,9 @@ def create_app():
 
     # initialise app with flask login manager
     login_manager.init_app(app)
+
+    # set session security to strong
+    login_manager.session_protection = "strong"
 
     # import blueprint from views
     from .views import main

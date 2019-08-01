@@ -11,14 +11,14 @@
     </div>
   </div>
   {% from 'includes/_formhelpers.html' import render_field %}
-  <h4 class="heading">Fill the form to add the offers</h4>
+  <h4 class="heading">Edit offer</h4>
 
   <form
-    onsubmit="handleSubmit()"
-    action=""
+    action="{{url_for('main.edit_offer', id=offer_id)}}"
     class="form"
     method="POST"
     enctype="multipart/form-data"
+    onsubmit="handleSubmit()"
   >
     <div class="form-group">
       {{ render_field(form.file, class_='form-control')}}
@@ -27,11 +27,6 @@
         <div class="card card-item">
           <a href="">
             <img src="{{ image }}" alt="image" class="res-image" />
-            <form action="" methods="POST">
-              <button class=" btn--times ">
-                <i class="fas fa-times"></i>
-              </button>
-            </form>
           </a>
         </div>
         {% endfor %}
@@ -55,19 +50,20 @@
     <div class="form-group">
       {{ render_field(form.addinfo, class_='form-control-textarea', id='adineditor')}}
     </div>
-
-    <button
-      id="edit--btn"
-      type="submit"
-      class="btn btn-primary btn-block btn-lg"
-    >
-      Submit
-      <span
-        id="edit-spinner"
-        style="visibility: hidden"
-        class="spinner-border spinner-border-sm"
-      ></span>
-    </button>
+    <div class="form-group">
+      <button
+        id="edit--btn"
+        type="submit"
+        class="btn btn-lg btn-primary btn-block"
+      >
+        Submit
+        <span
+          id="edit-spinner"
+          style="visibility: hidden"
+          class="spinner-border spinner-border-sm"
+        ></span>
+      </button>
+    </div>
   </form>
 </div>
 

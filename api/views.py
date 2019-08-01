@@ -9,7 +9,7 @@ from functools import wraps
 from ast import literal_eval
 from dotenv import load_dotenv
 from cloudinary import uploader
-from .controllers import upload, remove_image
+from .controllers import upload
 from mailer import Mailer, Message
 from bcrypt import hashpw, gensalt
 from flask_pymongo import MongoClient
@@ -29,72 +29,69 @@ client = MongoClient(uri, connect=False, connectTimeoutMS=30000)
 mongo = client.get_database('offers')
 
 
-# define routes
-
-# index route
-@main.route('/')
-def index():
-    return render_template('index.html')
-
-# register route
-@main.route('/register', methods=['POST'])
+# routes
+@main.route('/register', methods=['POST', 'GET'])
 @login_required
 def register():
+    form = RegisterForm(request.form)
     if request.method == 'POST':
-        # get the json information to create a user
-        user = request.get_json()
-
         # user details
-        name = user['name']
-        username = user['username']
-        email = user['email']
-        passw = user['password']
-        role = user['role']
-
-        # before adding user check that they are not null ::Todo
-
-        new_user = User(name=name, email=email, username=username,
-                        role=role, password=hashpw(passw.encode('utf-8'), gensalt()))
+        name = form.name.data
+        username = form.username.data
+        email = form.email.data
+        passw = form.password.data
+        role = form.role.data
 
         try:
+            existing_user = User.query.filter_by(email=email).first()
+            if existing_user:
+                error = 'email already exists'
+                return render_template('register.html', error=error)
+
+            new_user = User(name=name, email=email, username=username,
+                            role=role, password=hashpw(passw.encode('utf-8'), gensalt()))
+
             db.session.add(new_user)
             db.session.commit()
-            return jsonify({'msg': 'user added successfully'}), 200
+            flash('user added', "success")
+            return redirect(url_for('main.show_offers')), 200
         except Exception as error:
-            return jsonify({'msg': 'found error'}), 400
+            return jsonify({'msg': str(error)}), 400
 
-    return jsonify({'msg': 'method not allowed'}), 405
+    return render_template('register.html', form=form)
 
 
 # login route
-@main.route('/login', methods=['POST', 'GET'])
+@main.route('/', methods=['POST', 'GET'])
 def login():
     # form = LoginForm()
+    form = LoginForm(request.form)
     if request.method == 'POST':
         # get value from field
         try:
-            pass_candidate = request.form['password']
-            username = request.form['username']
+            pass_candidate = form.password.data
+            username = form.username.data
             # get user by usernamr
             log_user = User.query.filter_by(username=username).first()
 
             if log_user:
                 # check if password is same as one in the db
                 if hashpw(pass_candidate.encode('utf-8'), log_user.password) == log_user.password:
+
                     login_user(log_user, remember=True,
-                               duration=datetime.timedelta(minutes=40))
-                    flash('you have been logged in successfully', 'success')
+                               duration=datetime.timedelta(hours=6))
+                    msg = 'Welcome, you have logged in successfully'
                     return redirect(url_for('main.show_offers'))
                 else:
                     error = 'invalid login, check username or password'
-                    return render_template('login.html', error=error)
+                    return render_template('login.html', error=error), 400
             else:
                 error = 'invalid login, check your username or password'
-                flash(error, 'danger')
-                return render_template('login.html', error=error)
+                return render_template('login.html', error=error), 400
         except Exception as error:
-            return jsonify({'Message': error})
-    return render_template('login.html')
+            err = 'Error, something went wrong'
+            return render_template('login.html', error=err), 400
+    return render_template('login.html', form=form)
 
 
 # route to logout user
@@ -102,7 +99,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('main.login'))
 
 
 # route to add an offer
@@ -114,12 +111,12 @@ def add_offer():
 
         # get files from input files
         files = form.file.data
-        file = []
+        images = []
         for f in files:
             # upload each file
             result = upload(f)
             # append result to empty list
-            file.append(result)
+            images.append(result)
 
         title = form.title.data
         overview = form.overview.data
@@ -135,20 +132,18 @@ def add_offer():
             'Inclusion': inclusion,
             'Price': price,
             'AddInfo': addinfo,
-            'Images':  file,
+            'Images':  images,
             'CreatedAt': datetime.datetime.now()
         }
 
         try:
             offers = mongo.offers
             offers.insert_one(offer_item)
-            flash("added offer successfully", 'success')
-            return redirect(url_for('main.show_offers'))
+            return redirect(url_for('main.show_offers')), 200
 
         except Exception as err:
-            flash('we have a problem ' + str(err), 'danger')
-            msg = 'you face a problem please try again'
-            return render_template('add_offers.html', msg=msg), jsonify({'Message': 'we found a problem ' + err})
+            error = 'something went wrong, try again'
+            return render_template('add_offers.html', error=error), 400
 
     return render_template('add_offers.html', form=form)
 
@@ -188,17 +183,17 @@ def show_offers():
 @main.route('/editOffer/<string:id>', methods=['POST', 'GET'])
 @login_required
 def edit_offer(id):
-    # get the form
+    # get the form model
     form = DetailForm(request.form)
-
-    # connect to db and get offer
+    # get details from db
+    # connect to db
     offers = mongo.offers
+    # find offers
     offer = offers.find_one({'_id': ObjectId(id)})
-
-    # images
     images = offer['Images']
+    offer_id = offer['_id']
 
-    # populate  fields
+    # add data to the fields
     form.file.data = images
     form.title.data = offer['Title']
     form.overview.data = offer['Overview']
@@ -207,40 +202,46 @@ def edit_offer(id):
     form.price.data = offer['Price']
     form.addinfo.data = offer['AddInfo']
 
+    # post the updated information
+    # If method == post
     if request.method == 'POST':
-        # get files from input files
-        files = form.file.data
-        file = offer['Images']
-        for f in files:
-            if not f:
-                return file
-                # upload each file
-            result = upload(f)
-            # append result to empty list
-        file.append(result)
+        # get the new new form data
+        files = request.files.getlist('file')
+        for file in files:
+            if not file:
+                images = form.file.data
+            else:
+                result = upload(file)
+                images.insert(0, result)
 
-        title = request.form['title']
-        overview = request.form['overview']
-        itinerary = request.form['itinerary']
-        inclusion = request.form['inclusion']
-        price = request.form['price']
-        addinfo = request.form['addinfo']
+        title = request.form.get('title')
+        overview = request.form.get('overview')
+        itinerary = request.form.get('itinerary')
+        inclusion = request.form.get('inclusion')
+        price = request.form.get('price')
+        addinfo = request.form.get('addinfo')
 
-        update = {'Title': title,
-                  'Overview': overview,
-                  'Itinerary': itinerary,
-                  'Inclusion': inclusion,
-                  'Price': price,
-                  'AddInfo': addinfo,
-                  'Images': file,
-                  'CreatedAt': datetime.datetime.now()
-                  }
-
-        offers.update({'_id': ObjectId(id)}, update, True)
-
-        flash('article successfully edited')
-        return redirect(url_for('main.show_offers'))
-    return render_template('edit_offers.html', form=form, images=images, remove=remove_image(images), id=id)
+        # create the update object with all updated data
+        update = {'$set': {
+            "Images": images,
+            "Title": title,
+            "Overview": overview,
+            "Itinerary": itinerary,
+            "Inclusion": inclusion,
+            "Price": price,
+            "AddInfo": addinfo,
+            'CreatedAt': datetime.datetime.now()
+        }
+        }
+        # call the update function in mongo and pass the update
+        try:
+            offers.update_one({'_id': ObjectId(id)},
+                              update=update, upsert=True)
+            return redirect(url_for('main.show_offers'))
+        except Exception as error:
+            flash('Error, something went wrong')
+            return redirect(url_for('main.show_offers')), 400
+    return render_template('edit_offers.html', form=form, images=images, offer_id=offer_id)
 
 
 # route to delete an offer
@@ -252,6 +253,6 @@ def delete_offer(id):
 
         # find item to delete
         offers.delete_one({'_id': ObjectId(id)})
-        flash('item deleted', 'success')
+        flash('offer deleted', 'success')
         return redirect(url_for('main.show_offers'))
     return render_template('offers.html')

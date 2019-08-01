@@ -1,7 +1,8 @@
 # imports
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, IntegerField, StringField, PasswordField,  MultipleFileField
-from wtforms.validators import DataRequired, length, regexp
+from wtforms import StringField, PasswordField, TextAreaField, IntegerField, MultipleFileField
+from wtforms.validators import DataRequired, length, regexp, InputRequired, Email
+from wtforms.fields.html5 import EmailField
 from flask_ckeditor import CKEditorField
 
 # detail form class
@@ -26,11 +27,15 @@ class DetailForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    name = StringField('name', validators=[length(min=1, max=50)])
-    username = StringField('username', validators=[length(min=4, max=25)])
-    email = StringField('email', validators=[length(min=6, max=50)])
-    password = PasswordField('password', validators=[DataRequired])
-    role = StringField('role', validators=[DataRequired])
+    name = StringField('name', validators=[length(
+        min=1, max=50), InputRequired('Name is required')])
+    username = StringField('username', validators=[length(
+        min=4, max=25), InputRequired('Username is required')])
+    email = EmailField('email', validators=[length(min=6, max=50), InputRequired(
+        'Email is required'), Email('Please enter a valid email')])
+    password = PasswordField('password', validators=[
+                             InputRequired('Password is required')])
+    role = StringField('role', validators=[InputRequired('Role is required')])
 
 
 class LoginForm(FlaskForm):

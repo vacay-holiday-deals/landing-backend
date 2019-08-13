@@ -1,10 +1,11 @@
 # imports
 import os
 import datetime
-from . import db
+from . import db, create_app
 import cloudinary
 from .models import User
 from bson import ObjectId
+from .db_connect import Connect
 from functools import wraps
 from ast import literal_eval
 from dotenv import load_dotenv
@@ -26,7 +27,7 @@ load_dotenv(verbose=True)
 # mongodb configurations
 uri = os.getenv('MONGO_URI')
 client = MongoClient(uri, connect=False, connectTimeoutMS=30000)
-mongo = client.get_database('offers')
+mongo = client.get_database('myoffers')
 
 
 # routes
@@ -64,7 +65,6 @@ def register():
 # login route
 @main.route('/', methods=['POST', 'GET'])
 def login():
-    # form = LoginForm()
     form = LoginForm(request.form)
     if request.method == 'POST':
         # get value from field
@@ -256,3 +256,4 @@ def delete_offer(id):
         flash('offer deleted', 'success')
         return redirect(url_for('main.show_offers'))
     return render_template('offers.html')
+

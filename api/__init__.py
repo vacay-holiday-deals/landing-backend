@@ -2,7 +2,6 @@ from flask import Flask, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 from flask_cors import CORS
-from flask_talisman import Talisman
 from dotenv import load_dotenv
 from flask_assets import Environment, Bundle
 import cloudinary
@@ -11,6 +10,8 @@ from itsdangerous import URLSafeSerializer
 from flask_fontawesome import FontAwesome
 from flask_ckeditor import CKEditor
 from flask_migrate import Migrate
+from flask_environments import Environments
+
 
 db = SQLAlchemy()
 cors = CORS()
@@ -20,6 +21,7 @@ fa = FontAwesome()
 ckeditor = CKEditor()
 migrate = Migrate()
 
+
 css = Bundle('css/root.css', 'css/layouts.css', 'css/navbar.css',
              'css/index.css', 'css/login.css', 'css/offers.css', 'css/edit_offers.css', 'css/add_offers.css', output='gen/main.css')
 js = Bundle('js/app.js', output='gen/main.js')
@@ -28,6 +30,9 @@ js = Bundle('js/app.js', output='gen/main.js')
 # create the app function
 def create_app():
     app = Flask(__name__)
+    import config
+
+    app.config.from_object(config.Development())
 
     # prevents crossite scripting
     cors.init_app(app)

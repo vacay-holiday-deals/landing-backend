@@ -1,3 +1,4 @@
+{% if current_user.is_authenticated %}
 <nav class="navbar navbar-default">
   <a class="navbar-brand" href="#">
     <div class="logo--img">
@@ -8,7 +9,6 @@
     </div>
   </a>
   <div class="nav--container">
-    {% if current_user.is_authenticated %}
     <div class="nav--users">
       <span class="username">{{ current_user.username }}</span>
       <i class="fas fa-user"> </i>
@@ -16,6 +16,6 @@
         ><i class="fas fa-sign-out-alt"><span>Logout</span></i></a
       >
     </div>
-    {% endif %}
   </div>
 </nav>
+{% endif %}

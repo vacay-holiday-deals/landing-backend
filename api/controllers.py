@@ -11,8 +11,6 @@ from cloudinary import uploader
 load_dotenv(verbose=True)
 
 # functions to do things
-
-
 # upload file to cloudinary
 def upload(file):
     res = cloudinary.uploader.upload(file, folder='Projects/vacay')

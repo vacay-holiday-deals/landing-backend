@@ -93,24 +93,76 @@
         </div>
       </div>
 
-      {% elif current_user.role == 'senior' %}
+      {% elif current_user.role == 'user' %}
       <a href="editOffer/{{ offer['id'] }}" class="icon">
         <i class="fas fa-pencil-alt"><span>edit</span></i>
       </a>
 
-      <form
-        action="{{url_for('main.delete_offer', id=offer['id'])}}"
-        method="POST"
+      <button
+        type="button"
+        class="icon"
+        data-toggle="modal"
+        data-target="#exampleModalCenter"
       >
-        <button type="submit" class="icon">
-          <i class="fas fa-trash-alt"><span>delete</span></i>
-        </button>
-      </form>
+        <i class="fas fa-trash-alt"> <span>delete</span></i>
+      </button>
 
-      {% elif current_user.role == 'junior' %}
-      <a href="editOffer/{{ offer['id'] }}" class="icon">
-        <i class="fas fa-pencil-alt"><span>edit</span></i>
-      </a>
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="exampleModalCenter"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">
+                Delete offer
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary add-offer"
+                data-dismiss="modal"
+              >
+                cancel
+              </button>
+              <form
+                action="{{url_for('main.delete_offer', id=offer['id'])}}"
+                method="POST"
+                onsubmit="handleSubmit()"
+              >
+                <button
+                  id="delete--btn"
+                  type="submit"
+                  class="btn add-offer"
+                  style="background: #e73846; color:white;"
+                >
+                  delete
+                  <span
+                    id="add-spinner"
+                    style="visibility: hidden"
+                    class="spinner-border spinner-border-sm"
+                  ></span>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {% else %}
       <div></div>

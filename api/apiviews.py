@@ -126,22 +126,3 @@ def get_offer(title):
     return output
 
 
-@api.route('/api/getusers', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    output = []
-    for user in users:
-
-        output.append({
-            "name": user.name,
-            "username": user.username,
-            "email": user.email,
-            "password": str(user.password),
-            "role": user.role
-        })
-        return jsonify({"Output": output})
-    return users
-
-
-
-        

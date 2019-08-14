@@ -30,10 +30,7 @@ js = Bundle('js/app.js', output='gen/main.js')
 # create the app function
 def create_app():
     app = Flask(__name__)
-    import config
-
-    app.config.from_object(config.Development())
-
+    
     # prevents crossite scripting
     cors.init_app(app)
 

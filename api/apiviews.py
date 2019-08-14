@@ -58,7 +58,7 @@ def get_data():
 
         body = 'Name: ' + new_data['Name'] + '\n' + 'Email: ' + new_data['Email'] + '\n' + ' Nationality: ' + new_data['Nationality'] + '\n' + ' Number: ' + new_data['Number'] + '\n' + ' Departure: ' + \
             new_data['Departure'] + '\n' + ' Adults: ' + new_data['Adults'] + '\n' + ' Children: ' + \
-            new_data['Children'] + '\n' + \
+            new_data['Children'] + '\n' + 'Budget : ' + new_data['Budget'] + '\n' \
             ' Additional information: ' + new_data['Info']
 
         context = ssl.create_default_context()
@@ -92,7 +92,7 @@ def get_data():
                 # connect to database
                 emails = mongo.emails
                 emails.insert_one(email_object)
-                return jsonify({'Message': 'Thank you,information sent'}), 200
+                return jsonify({'Message': 'Your inquiry has been sent'}), 200
             except Exception as error:
                 return jsonify({'Message': 'we encountered an error'}), 400
 
@@ -126,18 +126,3 @@ def get_offer(title):
     return output
 
 
-@api.route('/api/getusers', methods=['GET'])
-def get_users():
-    users = User.query.all()
-    output = []
-    for user in users:
-
-        output.append({
-            "name": user.name,
-            "username": user.username,
-            "email": user.email,
-            "password": str(user.password),
-            "role": user.role
-        })
-        return jsonify({"Output": output})
-    return users

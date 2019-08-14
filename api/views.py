@@ -1,7 +1,7 @@
 # imports
 import os
 import datetime
-from . import db
+from . import db, create_app
 import cloudinary
 from .models import User
 from bson import ObjectId
@@ -26,12 +26,11 @@ load_dotenv(verbose=True)
 # mongodb configurations
 uri = os.getenv('MONGO_URI')
 client = MongoClient(uri, connect=False, connectTimeoutMS=30000)
-mongo = client.get_database('offers')
+mongo = client.get_database('myoffers')
 
 
 # routes
 @main.route('/register', methods=['POST', 'GET'])
-@login_required
 def register():
     form = RegisterForm(request.form)
     if request.method == 'POST':
@@ -46,13 +45,17 @@ def register():
             existing_user = User.query.filter_by(email=email).first()
             if existing_user:
                 error = 'email already exists'
-                return render_template('register.html', error=error)
+                return jsonify({'msg': error})
 
             new_user = User(name=name, email=email, username=username,
                             role=role, password=hashpw(passw.encode('utf-8'), gensalt()))
 
             db.session.add(new_user)
             db.session.commit()
+            print('created new user')
+            # query db for new users
+            created_user = User.query.filter_by(name=name).first()
+            print({"Created User": created_user})
             flash('user added', "success")
             return redirect(url_for('main.show_offers')), 200
         except Exception as error:
@@ -64,7 +67,6 @@ def register():
 # login route
 @main.route('/', methods=['POST', 'GET'])
 def login():
-    # form = LoginForm()
     form = LoginForm(request.form)
     if request.method == 'POST':
         # get value from field

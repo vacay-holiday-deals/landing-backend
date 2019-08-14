@@ -1,6 +1,6 @@
 # imports
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, TextAreaField, IntegerField, MultipleFileField
+from wtforms import StringField, PasswordField, TextAreaField, IntegerField, MultipleFileField, SelectField
 from wtforms.validators import DataRequired, length, regexp, InputRequired, Email
 from wtforms.fields.html5 import EmailField
 from flask_ckeditor import CKEditorField
@@ -35,7 +35,8 @@ class RegisterForm(FlaskForm):
         'Email is required'), Email('Please enter a valid email')])
     password = PasswordField('password', validators=[
                              InputRequired('Password is required')])
-    role = StringField('role', validators=[InputRequired('Role is required')])
+    role = SelectField('role', choices=[('admin', 'admin'), ('user', 'user')], validators=[
+                       InputRequired('Role is required')])
 
 
 class LoginForm(FlaskForm):

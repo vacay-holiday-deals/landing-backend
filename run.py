@@ -13,7 +13,7 @@ app = create_app()
 if __name__ == '__main__':
     # use the variable to run the app
     if app.env == 'development':
-        port = '5000'
+        port = '5500'
         app.run(port=port)
     else:
         app.run(host=env_host)

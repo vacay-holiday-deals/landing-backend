@@ -26,7 +26,7 @@ load_dotenv(verbose=True)
 # mongodb configurations
 uri = os.getenv('MONGO_URI')
 client = MongoClient(uri, connect=False, connectTimeoutMS=30000)
-mongo = client.get_database('myoffers')
+mongo = client.get_database('offers')
 
 
 # routes

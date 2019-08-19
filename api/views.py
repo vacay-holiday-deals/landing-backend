@@ -24,7 +24,7 @@ main = Blueprint('main', __name__)
 load_dotenv(verbose=True)
 
 # mongodb configurations
-uri = os.getenv('MONGO_URI')
+uri = os.getenv('MONGO_URI_DEV')
 client = MongoClient(uri, connect=False, connectTimeoutMS=30000)
 mongo = client.get_database('offers')
 
@@ -158,7 +158,7 @@ def show_offers():
         output = []
         try:
             offer = mongo.offers
-
+            proxy = os.getenv('PROXY')
             offers = offer.find()
             for offer in offers:
                 if offer:
@@ -174,7 +174,7 @@ def show_offers():
                         'created': offer['CreatedAt']
                     })
 
-            return render_template('offers.html', output=output)
+            return render_template('offers.html', output=output, proxy=proxy)
         except Exception as err:
             return jsonify({'Message': err})
 

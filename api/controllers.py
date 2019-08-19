@@ -7,13 +7,17 @@ from flask import request, redirect, url_for, flash
 import cloudinary
 from cloudinary import uploader
 
+
 # load env variables
 load_dotenv(verbose=True)
 
 # functions to do things
 # upload file to cloudinary
+
+
 def upload(file):
-    res = cloudinary.uploader.upload(file, folder='Projects/vacay')
+    folder = os.getenv('CLOUD_FOLDER')
+    res = cloudinary.uploader.upload(file, folder=folder)
     result = res['secure_url']
     return result
 
@@ -28,4 +32,3 @@ def load_user(user_id):
 def unauthorized():
     flash('login to access page')
     return redirect(url_for('main.login'))
-

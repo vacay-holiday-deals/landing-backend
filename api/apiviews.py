@@ -8,7 +8,7 @@ import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import os
-from bson import ObjectId
+from bson import ObjectId, objectid
 
 api = Blueprint('api', __name__)
 
@@ -25,7 +25,7 @@ def get_offers():
                 for offer in offers:
                     if offer:
                         output.append({
-                            # 'id': offer['_id'],
+                            'id': str(offer['_id']),
                             'title': offer['Title'],
                             'overview': offer['Overview'],
                             'itinerary': offer['Itinerary'],
@@ -37,7 +37,7 @@ def get_offers():
                         })
                 return jsonify(output)
             except Exception as err:
-                return jsonify({"Message": "sould not connect to the database"}), 400
+                return jsonify({"Message": "could not connect to the database"}), 400
         return jsonify({'Message': 'method not allowed'}), 405
     except Exception as error:
         return jsonify({'Message': "something went wrong"}), 400
@@ -92,6 +92,7 @@ def get_data():
                 # connect to database
                 emails = mongo.emails
                 emails.insert_one(email_object)
+                print('email added to db')
                 return jsonify({'Message': 'Your inquiry has been sent'}), 200
             except Exception as error:
                 return jsonify({'Message': 'we encountered an error'}), 400
@@ -124,5 +125,3 @@ def get_offer(title):
     except Exception as e:
         return jsonify({"Message": "something went wrong"}), 400
     return output
-
-

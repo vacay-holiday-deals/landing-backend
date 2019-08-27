@@ -15,7 +15,7 @@ from bcrypt import hashpw, gensalt
 from flask_pymongo import MongoClient
 from .forms import RegisterForm, DetailForm, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
-from flask import render_template, redirect, url_for, flash, request, jsonify, Blueprint, session
+from flask import render_template, redirect, url_for, flash, request, jsonify, Blueprint, session, make_response
 
 # initialise blueprint
 main = Blueprint('main', __name__)
@@ -28,9 +28,9 @@ uri = os.getenv('MONGO_URI')
 client = MongoClient(uri, connect=False, connectTimeoutMS=30000)
 mongo = client.get_database('offers')
 
-
 # routes
 @main.route('/adduser', methods=['POST', 'GET'])
+@login_required
 def adduser():
     form = RegisterForm(request.form)
     if request.method == 'POST':

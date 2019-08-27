@@ -3,7 +3,7 @@ from .models import User
 from flask_pymongo import MongoClient
 import os
 from dotenv import load_dotenv
-from flask import request, redirect, url_for, flash
+from flask import request, redirect, url_for, flash, render_template
 import cloudinary
 from cloudinary import uploader
 
@@ -37,3 +37,8 @@ def load_user(user_id):
 def unauthorized():
     flash('login to access page')
     return redirect(url_for('main.login'))
+
+
+# error handler function
+def page_not_found(e):
+   return render_template('404.html')

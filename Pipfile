@@ -24,7 +24,7 @@ flask-fontawesome = "*"
 flask-ckeditor = "*"
 flask-migrate = "*"
 flask-dropzone = "*"
-flask-environments = "*"
+flask-mongoengine = "*"
 
 [requires]
 python_version = "3.6"

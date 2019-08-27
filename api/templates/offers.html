@@ -4,6 +4,11 @@
     <a href="{{ url_for('main.add_offer') }}" class="btn btn-primary add-offer"
       ><i class="fas fa-plus"><span>add offer</span></i></a
     >
+    {% if current_user.role == 'admin' %}
+    <a href="{{ url_for('main.adduser') }}" class="btn btn-primary add-offer">
+      <i class="fas fa-plus"><span>add user</span></i>
+    </a>
+    {% endif %}
   </div>
 
   {% for offer in output %}
@@ -49,7 +54,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLongTitle">
-                Delete offer
+                Delete offer {{ offer["title"] }}
               </h5>
               <button
                 type="button"

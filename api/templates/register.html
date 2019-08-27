@@ -1,10 +1,10 @@
 {% extends 'layouts.html' %} {% block body %}
 
-<div class="login--container mt-5 mb-3">
+<div class="register--container mb-3">
   {% from 'includes/_formhelpers.html' import render_field %}
   <form
     onsubmit="handleSubmit()"
-    action="{{ url_for('main.register') }}"
+    action="{{ url_for('main.adduser') }}"
     method="post"
   >
     <div class="form--logo">
@@ -13,25 +13,31 @@
         alt="company logo"
       />
     </div>
-    <h4 class="form--heading">Create an account</h4>
-    <div class="form-group">
-      {{ render_field(form.name, class_="form-control", id="name", placeholder="name") }}
+    <h4 class="form--heading">Add a new user</h4>
+    <div class="separate">
+      <div class="form--group">
+        {{ render_field(form.name, class_="form--control", id="name", placeholder="name") }}
+      </div>
+      <div class="form--group">
+        {{render_field(form.email, class_="form--control", id="email", placeholder="email")}}
+      </div>
     </div>
-    <div class="form-group">
-      {{render_field(form.email, class_="form-control", id="email", placeholder="email")}}
+    <div class="separate">
+      <div class="form--group">
+        {{render_field(form.username, class_="form--control", id="username", placeholder="username")}}
+      </div>
+      <div class="form--group">
+        {{render_field(form.role, class_="form--control", id="role")}}
+      </div>
     </div>
-    <div class="form-group">
-      {{render_field(form.username, class_="form-control", id="username", placeholder="username")}}
-    </div>
-    <div class="form-group">
-      {{render_field(form.role, class_="form-control", id="role")}}
-    </div>
-    <div class="form-group">
-      {{render_field(form.password, class_="form-control", id="password", placeholder="password")}}
+    <div class="separate">
+      <div class="form--group">
+        {{render_field(form.password, class_="form--control", id="password", placeholder="password")}}
+      </div>
     </div>
     <div class="button">
       <button id="login--btn" type="submit" class="btn btn-primary btn-block">
-        Login
+        Add User
         <span
           id="spinner"
           style="visibility: hidden"

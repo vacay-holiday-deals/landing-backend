@@ -126,11 +126,11 @@ def get_offer(title):
             }
 
         else:
-            return jsonify({"message": "could not get offer"})
+            return jsonify({"message": "could not get offer"}), 404
     except Exception as error:
         print(error)
         return jsonify({"Message": "something went wrong"}), 400
-    return output
+    return output, 200
 
 
 # endpoint to record number of clicks

@@ -27,7 +27,7 @@ ckeditor = CKEditor()
 db = MongoEngine()
 
 css = Bundle('css/root.css', 'css/layouts.css', 'css/navbar.css',
-             'css/index.css', 'css/login.css', 'css/offers.css', 'css/register.css', 'css/edit_offers.css', 'css/add_offers.css', output='gen/main.css')
+             'css/index.css', 'css/login.css', 'css/offers.css', 'css/404.css', 'css/register.css', 'css/edit_offers.css', 'css/add_offers.css', output='gen/main.css')
 js = Bundle('js/app.js', output='gen/main.js')
 
 
@@ -81,7 +81,9 @@ def create_app():
     # import blueprint from views
     from .views import main
     from .apiviews import api
+    from .controllers import page_not_found
 
+    app.register_error_handler(404, page_not_found)
     app.register_blueprint(main)
     app.register_blueprint(api)
 

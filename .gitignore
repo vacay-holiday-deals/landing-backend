@@ -1,3 +1,8 @@
 # what to be ignored on github
 .env
+.env.local
+.env.development.local
+.env.production.local
 migrations
+
+.sh

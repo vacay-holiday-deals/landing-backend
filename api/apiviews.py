@@ -36,10 +36,12 @@ def get_offers():
                             'created': offer['CreatedAt']
                         })
                 return jsonify(output)
-            except Exception as err:
+            except Exception as error:
+                print(error)
                 return jsonify({"Message": "could not connect to the database"}), 400
         return jsonify({'Message': 'method not allowed'}), 405
     except Exception as error:
+        print(error)
         return jsonify({'Message': "something went wrong"}), 400
 
 
@@ -54,6 +56,7 @@ def get_data():
         port = 465
 
         data = request.data
+        print(data)
         new_data = literal_eval(data.decode('utf-8'))
 
         body = 'Name: ' + new_data['Name'] + '\n' + 'Email: ' + new_data['Email'] + '\n' + ' Nationality: ' + new_data['Nationality'] + '\n' + ' Number: ' + new_data['Number'] + '\n' + ' Departure: ' + \
@@ -80,6 +83,7 @@ def get_data():
                     'Name': new_data['Name'],
                     'Email': new_data['Email'],
                     'Nationality': new_data['Nationality'],
+                    'Number': new_data['Number'],
                     'Package': new_data['Package'],
                     'Depature': new_data['Departure'],
                     'Adult': new_data['Adults'],
@@ -92,10 +96,11 @@ def get_data():
                 # connect to database
                 emails = mongo.emails
                 emails.insert_one(email_object)
-                print('email added to db')
+                # ** Todo: create a backup email database **
                 return jsonify({'Message': 'Your inquiry has been sent'}), 200
             except Exception as error:
-                return jsonify({'Message': 'we encountered an error'}), 400
+                print(error)
+                return jsonify({'Message': 'something went wrong, please try again!!'}), 400
 
     return jsonify({'Message': 'you encountered a problem'}), 400
 
@@ -122,6 +127,18 @@ def get_offer(title):
 
         else:
             return jsonify({"message": "could not get offer"})
-    except Exception as e:
+    except Exception as error:
+        print(error)
         return jsonify({"Message": "something went wrong"}), 400
     return output
+
+
+# endpoint to record number of clicks
+@api.route('/api/recordclicks', methods=['POST', 'GET'])
+def recordclicks():
+    if request.method == 'POST':
+        data = request.data.decode('utf-8')
+        clicks = mongo.clicks
+        # clicks.insert_one(data)
+        print(data + "has been recorded")
+    return 'no data received'

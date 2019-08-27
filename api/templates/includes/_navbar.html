@@ -1,6 +1,6 @@
 {% if current_user.is_authenticated %}
 <nav class="navbar navbar-default">
-  <a class="navbar-brand" href="#">
+  <a class="navbar-brand" href="{{ url_for('main.show_offers') }}">
     <div class="logo--img">
       <img
         src="{{url_for('static', filename='images/logo.png')}}"

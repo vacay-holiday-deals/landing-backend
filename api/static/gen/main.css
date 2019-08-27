@@ -228,6 +228,7 @@ h3 {
 .form-group {
   margin: 0;
   padding: 5px;
+
 }
 
 label {
@@ -237,8 +238,8 @@ label {
 
 .form-control,
 textarea {
-  border-radius: 2px !important;
-  height: 3rem !important;
+  border-radius: 2px;
+  height: 3rem;
   max-width: 100%;
   background: #e3e3e4;
   border: none !important;
@@ -277,7 +278,6 @@ textarea:active {
 .offers--container {
   margin: 0 15%;
   width: 70%;
-  margin-top: 0rem;
 }
 
 .offer--card {
@@ -404,6 +404,61 @@ span {
     flex-direction: row;
     width: 30vw;
   }
+}
+
+.register--container {
+  width: 60%;
+  margin: 0 20%;
+  border: 1px solid #eeeeee;
+}
+
+.form--logo {
+  object-fit: contain;
+  height: 60px;
+  width: 120px;
+  margin: 10px 0;
+  padding: 0;
+}
+
+.form--logo > img {
+  height: 100%;
+  width: 100%;
+}
+
+.form--heading {
+  font-size: 1.3rem;
+  font-family: var(--heading-font), sans-serif;
+  font-weight: 600;
+  margin-left: 20px;
+}
+
+.separate {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.form--group {
+  margin: 0;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+}
+
+label {
+  font-size: 0.9rem;
+  font-family: var(--primary-font), sans-serif;
+}
+
+.form--control {
+  border-radius: 2px;
+  height: 3rem;
+  max-width: 100%;
+  background: #e3e3e4;
+  border: none;
+  outline: none;
+  padding: 0 20px;
 }
 
 .edit--container {

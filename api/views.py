@@ -15,7 +15,7 @@ from bcrypt import hashpw, gensalt
 from flask_pymongo import MongoClient
 from .forms import RegisterForm, DetailForm, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
-from flask import render_template, redirect, url_for, flash, request, jsonify, Blueprint
+from flask import render_template, redirect, url_for, flash, request, jsonify, Blueprint, session
 
 # initialise blueprint
 main = Blueprint('main', __name__)
@@ -30,8 +30,8 @@ mongo = client.get_database('offers')
 
 
 # routes
-@main.route('/register', methods=['POST', 'GET'])
-def register():
+@main.route('/adduser', methods=['POST', 'GET'])
+def adduser():
     form = RegisterForm(request.form)
     if request.method == 'POST':
         # user details
@@ -42,25 +42,22 @@ def register():
         role = form.role.data
 
         try:
-            existing_user = User.query.filter_by(email=email).first()
-            if existing_user:
-                error = 'email already exists'
-                return jsonify({'msg': error})
+            registered_user = User.objects(email=email).first()
+            if registered_user:
+                error = 'a user with that email already exists'
+                print(error)
+                return render_template('register.html', form=form, error=error)
 
-            new_user = User(name=name, email=email, username=username,
-                            role=role, password=hashpw(passw.encode('utf-8'), gensalt()))
+            password = hashpw(passw.encode('utf-8'), gensalt(rounds=12))
 
-            db.session.add(new_user)
-            db.session.commit()
-            print('created new user')
-            # query db for new users
-            created_user = User.query.filter_by(name=name).first()
-            print({"Created User": created_user})
-            flash('user added', "success")
+            new_user = User(name, email, username, role, password)
+
+            new_user.save()
             return redirect(url_for('main.show_offers')), 200
         except Exception as error:
-            return jsonify({'msg': str(error)}), 400
-
+            print(error)
+            error = 'something went wrong, please try again'
+            return render_template('register.html', error=error), 400
     return render_template('register.html', form=form)
 
 
@@ -68,31 +65,35 @@ def register():
 @main.route('/', methods=['POST', 'GET'])
 def login():
     form = LoginForm(request.form)
+    if current_user.is_authenticated == True:
+        return redirect(url_for('main.show_offers'))
     if request.method == 'POST':
         # get value from field
         try:
             pass_candidate = form.password.data
             username = form.username.data
-            # get user by usernamr
-            log_user = User.query.filter_by(username=username).first()
+            # get user by username
+            log_user = User.objects(username=username).first()
 
             if log_user:
                 # check if password is same as one in the db
-                if hashpw(pass_candidate.encode('utf-8'), log_user.password) == log_user.password:
-
+                if hashpw(pass_candidate.encode('utf-8'), log_user['password'].encode('utf-8')) == log_user['password'].encode('utf-8'):
+                    session.permanent = True
                     login_user(log_user, remember=True,
-                               duration=datetime.timedelta(hours=6))
+                               duration=datetime.timedelta(hours=24))
                     msg = 'Welcome, you have logged in successfully'
                     return redirect(url_for('main.show_offers'))
                 else:
                     error = 'invalid login, check username or password'
-                    return render_template('login.html', error=error), 400
+                    return render_template('login.html', form=form, error=error), 400
             else:
-                error = 'invalid login, check your username or password'
-                return render_template('login.html', error=error), 400
+                error = 'this user does not exist'
+                print(error)
+                return render_template('login.html', form=form, error=error), 400
         except Exception as error:
+            print(error)
             err = 'Error, something went wrong'
-            return render_template('login.html', error=err), 400
+            return render_template('login.html', form=form, error=err), 400
     return render_template('login.html', form=form)
 
 
@@ -144,8 +145,9 @@ def add_offer():
             return redirect(url_for('main.show_offers')), 200
 
         except Exception as err:
+            print(err)
             error = 'something went wrong, try again'
-            return render_template('add_offers.html', error=error), 400
+            return render_template('add_offers.html', form=form, error=error), 400
 
     return render_template('add_offers.html', form=form)
 
@@ -175,8 +177,9 @@ def show_offers():
                     })
 
             return render_template('offers.html', output=output, proxy=proxy)
-        except Exception as err:
-            return jsonify({'Message': err})
+        except Exception as error:
+            print(error)
+            return jsonify({'Message': 'something went wrong'})
 
     return render_template('offers.html')
 
@@ -241,6 +244,7 @@ def edit_offer(id):
                               update=update, upsert=True)
             return redirect(url_for('main.show_offers'))
         except Exception as error:
+            print(error)
             flash('Error, something went wrong')
             return redirect(url_for('main.show_offers')), 400
     return render_template('edit_offers.html', form=form, images=images, offer_id=offer_id)
@@ -248,13 +252,16 @@ def edit_offer(id):
 
 # route to delete an offer
 @main.route('/delete/<string:id>', methods=['POST', 'GET'])
+@login_required
 def delete_offer(id):
-    if request.method == 'GET':
+    if request.method == 'POST':
         # connect to the database
         offers = mongo.offers
-
         # find item to delete
-        offers.delete_one({'_id': ObjectId(id)})
-        flash('offer deleted', 'success')
-        return redirect(url_for('main.show_offers'))
+        try:
+            offers.delete_one({'_id': ObjectId(id)})
+            return redirect(url_for('main.show_offers'))
+        except Exception as error:
+            print(error)
+            return redirect(url_for('main.show_offers'))
     return render_template('offers.html')

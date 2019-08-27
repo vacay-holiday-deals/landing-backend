@@ -23,9 +23,14 @@ def upload(file):
 
 
 # getting a user id
+# @login_manager.user_loader
+# def load_user(user_id):
+   # return User.query.get(int(user_id))
+
+
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return User.objects(pk=user_id).first()
 
 # handle unauthorised visits
 @login_manager.unauthorized_handler

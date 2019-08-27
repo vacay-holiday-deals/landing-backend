@@ -9,7 +9,7 @@ import cloudinary
 from flask_login import LoginManager
 from flask_fontawesome import FontAwesome
 from flask_ckeditor import CKEditor
-from flask_mongoengine import MongoEngine, connection
+from flask_mongoengine import MongoEngine
 from flask_pymongo import MongoClient
 
 
@@ -17,11 +17,6 @@ from flask_pymongo import MongoClient
 load_dotenv(verbose=True)
 
 mongo_uri = os.getenv('MONGO_URI')
-
-
-client = MongoClient(mongo_uri, connect=False)
-mongo_db = client.get_database('offers')
-
 
 #db = SQLAlchemy()
 cors = CORS()
@@ -43,7 +38,7 @@ def create_app():
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(minutes=1)
     app.config['MONGODB_SETTINGS'] = {
-        'db': mongo_db or None,
+        'db': 'offers',
         'host': mongo_uri or None,
         'connect': False
     }

@@ -24,14 +24,13 @@ main = Blueprint('main', __name__)
 load_dotenv(verbose=True)
 
 # mongodb configurations
-uri = os.getenv('MONGO_URI_DEV')
+uri = os.getenv('MONGO_URI')
 client = MongoClient(uri, connect=False, connectTimeoutMS=30000)
 mongo = client.get_database('offers')
 
 
 # routes
 @main.route('/adduser', methods=['POST', 'GET'])
-@login_required
 def adduser():
     form = RegisterForm(request.form)
     if request.method == 'POST':
@@ -47,7 +46,7 @@ def adduser():
             if registered_user:
                 error = 'a user with that email already exists'
                 print(error)
-                return render_template('register.html', error=error)
+                return render_template('register.html', form=form, error=error)
 
             password = hashpw(passw.encode('utf-8'), gensalt(rounds=12))
 
@@ -86,14 +85,15 @@ def login():
                     return redirect(url_for('main.show_offers'))
                 else:
                     error = 'invalid login, check username or password'
-                    return render_template('login.html', error=error), 400
+                    return render_template('login.html', form=form, error=error), 400
             else:
-                error = 'invalid login, check your username or password'
-                return render_template('login.html', error=error), 400
+                error = 'this user does not exist'
+                print(error)
+                return render_template('login.html', form=form, error=error), 400
         except Exception as error:
             print(error)
             err = 'Error, something went wrong'
-            return render_template('login.html', error=err), 400
+            return render_template('login.html', form=form, error=err), 400
     return render_template('login.html', form=form)
 
 
@@ -147,7 +147,7 @@ def add_offer():
         except Exception as err:
             print(err)
             error = 'something went wrong, try again'
-            return render_template('add_offers.html', error=error), 400
+            return render_template('add_offers.html', form=form, error=error), 400
 
     return render_template('add_offers.html', form=form)
 

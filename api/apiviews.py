@@ -53,6 +53,8 @@ def get_data():
         pwd = os.getenv('PASSWORD')
         sender = os.getenv('SENDER')
         receiver = os.getenv('RECEIVER')
+
+        print(usr, pwd, sender, receiver)
         port = 465
 
         data = request.data

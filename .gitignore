@@ -3,7 +3,3 @@
 .env.local
 .env.development.local
 .env.production.local
-migrations
-
-# Ignore .sh files
-*/*.sh

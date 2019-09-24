@@ -13,6 +13,8 @@ class DetailForm(FlaskForm):
                              regexp('\w+\.(jpg|jpeg|png)')])
     title = StringField('Title', validators=[
                         DataRequired, length(min=1, max=200)], )
+    destination = StringField('Destination', validators=[
+        DataRequired, length(min=1, max=200)], )
     overview = CKEditorField('Overview', validators=[
                              DataRequired, length(min=100)])
     itinerary = CKEditorField('Itinerary', validators=[

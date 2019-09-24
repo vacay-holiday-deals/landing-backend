@@ -15,35 +15,34 @@ api = Blueprint('api', __name__)
 # return all offers
 @api.route('/api/getoffer', methods=['GET'])
 def get_offers():
-    try:
-        if request.method == 'GET':
+    if request.method == 'GET':
+        try:
+            # connect to db
+            offers = mongo.offers
+            # find all overs
+            my_offers = list(offers.find({}))
+            output = []
+            for offer in my_offers:
+                if not offer:
+                    return jsonify({'message': 'no offers were found'}), 400
 
-            try:
-                offer = mongo.offers
-                offers = offer.find()
-                output = []
-                for offer in offers:
-                    if offer:
-                        output.append({
-                            'id': str(offer['_id']),
-                            'title': offer['Title'],
-                            'overview': offer['Overview'],
-                            'itinerary': offer['Itinerary'],
-                            'inclusion': offer['Inclusion'],
-                            'price': offer['Price'],
-                            'addinfo': offer['AddInfo'],
-                            'images': offer['Images'],
-                            'created': offer['CreatedAt']
-                        })
-                return jsonify(output)
-            except Exception as error:
-                print(error)
-                return jsonify({"Message": "could not connect to the database"}), 400
-        return jsonify({'Message': 'method not allowed'}), 405
-    except Exception as error:
-        print(error)
-        return jsonify({'Message': "something went wrong"}), 400
-
+                output.append({
+                    'id': str(offer['_id']),
+                    'title': offer['Title'],
+                    'overview': offer['Overview'],
+                    'itinerary': offer['Itinerary'],
+                    'inclusion': offer['Inclusion'],
+                    'price': offer['Price'],
+                    'addinfo': offer['AddInfo'],
+                    'images': offer['Images'],
+                    'destination': offer['Destination'],
+                    'created': offer['CreatedAt']
+                })
+            return jsonify(output), 200
+        except Exception as error:
+            print(error)
+            return jsonify({'message': error}), 400
+    return jsonify({'message': 'method not allowed'}), 405
 
 # data from frontend
 @api.route('/api/uploadDetail', methods=['POST'])
@@ -66,6 +65,7 @@ def get_data():
                 'Number': new_data['Number'],
                 'Package': new_data['Package'],
                 'Depature': new_data['Departure'],
+                'Destination': new_data['Destination'],
                 'Adult': new_data['Adults'],
                 'Children': new_data['Children'],
                 'Bugdet': new_data['Budget'],
@@ -83,11 +83,12 @@ def get_data():
                    <p> Nationality :  %s  </p>
                    <p> Number :  %s  </p>
                    <p> Departure :  %s  </p>
+                   <p> Destination :  %s  </p>
                    <p> Adults :  %s  </p>
                    <p> Children :  %s  </p>
                    <p> Budget :  %s  </p>
                    <span> <h4> Additional Information </h4> <p> %s </p></span>
-            """ % (new_data['Name'], new_data['Email'], new_data['Nationality'], new_data['Number'], new_data['Departure'], new_data['Adults'], new_data['Children'], new_data['Budget'], new_data['Info'])
+            """ % (new_data['Name'], new_data['Email'], new_data['Nationality'], new_data['Number'], new_data['Departure'], new_data['Destination'], new_data['Adults'], new_data['Children'], new_data['Budget'], new_data['Info'])
 
             # # send mail to mail server
             context = ssl.create_default_context()
@@ -119,7 +120,7 @@ def get_offer(title):
         offer = offers.find_one(filter={"Title": title})
         if offer:
             output = {
-                # 'id': offer['_id'],
+                'id': str(offer['_id']),
                 'title': offer['Title'],
                 'overview': offer['Overview'],
                 'itinerary': offer['Itinerary'],
@@ -127,23 +128,14 @@ def get_offer(title):
                 'price': offer['Price'],
                 'addinfo': offer['AddInfo'],
                 'images': offer['Images'],
+                'destination': offer['Destination'],
                 'created': offer['CreatedAt']
             }
-
+            return jsonify(output), 200
         else:
-            return jsonify({"message": "could not get offer"}), 404
+            return jsonify({"Message": "could not get offer"}), 400
     except Exception as error:
         print(error)
         return jsonify({"Message": "something went wrong"}), 400
-    return output, 200
 
 
-# endpoint to record number of clicks
-@api.route('/api/recordclicks', methods=['POST', 'GET'])
-def recordclicks():
-    if request.method == 'POST':
-        data = request.data.decode('utf-8')
-        clicks = mongo.clicks
-        # clicks.insert_one(data)
-        print(data + "has been recorded")
-    return 'no data received'

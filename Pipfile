@@ -23,6 +23,7 @@ flask-fontawesome = "*"
 flask-ckeditor = "*"
 flask-dropzone = "*"
 flask-mongoengine = "*"
+flask-jwt-extended = "*"
 
 [requires]
 python_version = "3.6"

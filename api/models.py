@@ -25,12 +25,12 @@ class User(UserMixin, db.Document):
 
 class Offer(db.Document):
     meta = {'collection': 'offers'}
-    Title = db.StringField(max_length=100)
-    Overview = db.StringField(max_length=2000)
-    Itinerary = db.StringField(max_length=2000)
-    Inclusion = db.StringField(max_length=2000)
-    Price = db.StringField(max_length=2000)
-    AddInfo = db.StringField(max_length=2000)
+    Title = db.StringField(max_length=100, default='')
+    Overview = db.StringField(max_length=2000, default='')
+    Itinerary = db.StringField(max_length=2000, default='')
+    Inclusion = db.StringField(max_length=2000, default='')
+    Price = db.StringField(max_length=2000, default='')
+    AddInfo = db.StringField(max_length=2000, default='')
     Images = db.ListField(db.StringField(), default=list)
     Created = db.DateTimeField(default=datetime.now())
 

@@ -126,7 +126,11 @@ def add_offer():
         itinerary = form.itinerary.data
         inclusion = form.inclusion.data
         price = form.price.data
+        destination = form.destination.data
         addinfo = form.addinfo.data
+
+        destinations = list(destination.split(','))
+        print(destinations)
 
         offer_item = {
             'Title': title,
@@ -136,6 +140,7 @@ def add_offer():
             'Price': price,
             'AddInfo': addinfo,
             'Images':  images,
+            'Destination': destinations,
             'CreatedAt': datetime.datetime.now()
         }
 
@@ -197,6 +202,7 @@ def edit_offer(id):
     offer = offers.find_one({'_id': ObjectId(id)})
     images = offer['Images']
     offer_id = offer['_id']
+    location = ','.join(offer['Destination'])
 
     # add data to the fields
     form.file.data = images
@@ -205,6 +211,7 @@ def edit_offer(id):
     form.itinerary.data = offer['Itinerary']
     form.inclusion.data = offer['Inclusion']
     form.price.data = offer['Price']
+    form.destination.data = location
     form.addinfo.data = offer['AddInfo']
 
     # post the updated information
@@ -224,7 +231,10 @@ def edit_offer(id):
         itinerary = request.form.get('itinerary')
         inclusion = request.form.get('inclusion')
         price = request.form.get('price')
+        destination = request.form.get('destination')
         addinfo = request.form.get('addinfo')
+
+        destinations = destination.split(',')
 
         # create the update object with all updated data
         update = {'$set': {
@@ -234,6 +244,7 @@ def edit_offer(id):
             "Itinerary": itinerary,
             "Inclusion": inclusion,
             "Price": price,
+            "Destination": destinations,
             "AddInfo": addinfo,
             'CreatedAt': datetime.datetime.now()
         }

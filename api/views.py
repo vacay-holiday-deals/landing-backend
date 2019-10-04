@@ -158,7 +158,7 @@ def add_offer():
 
 
 # show the offers available
-@main.route('/showOffers', methods=['GET'])
+@main.route('/showoffers', methods=['GET'])
 @login_required
 def show_offers():
     if request.method == 'GET':
@@ -233,7 +233,6 @@ def edit_offer(id):
         price = request.form.get('price')
         destination = request.form.get('destination')
         addinfo = request.form.get('addinfo')
-
         destinations = destination.split(',')
 
         # create the update object with all updated data
@@ -276,3 +275,21 @@ def delete_offer(id):
             print(error)
             return redirect(url_for('main.show_offers'))
     return render_template('offers.html')
+
+
+@main.route('/deleteimage/<string:id>', methods=['POST', 'GET'])
+@login_required
+def delete_image(id):
+    if request.method == 'POST':
+        img = request.args.get('image')
+
+        # connect to database
+        offers = mongo.offers
+
+        try:
+            offers.update({'_id': id}, {'$pull': {'Images': img}})
+            print('image deleted')
+        except Exception as err:
+            print({'error': error})
+
+    return redirect(url_for('main.edit_offer', id=id))

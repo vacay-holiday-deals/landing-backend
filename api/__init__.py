@@ -33,7 +33,7 @@ js = Bundle('js/app.js', output='gen/main.js')
 # create the app function
 def create_app():
     app = Flask(__name__)
-    app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(minutes=1)
+    app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(hours=2)
     app.config['MONGODB_SETTINGS'] = {
         'db': 'offers',
         'host': mongo_uri or None,
